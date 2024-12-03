@@ -1,154 +1,130 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { GoogleAIFileManager } = require("@google/generative-ai/server");
+
+class RateLimiter {
+  constructor(maxRequests = 5, timeWindow = 60000) { // 14 requests per minute to be safe
+      this.requests = [];
+      this.maxRequests = maxRequests;
+      this.timeWindow = timeWindow;
+  }
+
+  async waitForAvailableSlot() {
+      const now = Date.now();
+      this.requests = this.requests.filter(time => time > now - this.timeWindow);
+      
+      if (this.requests.length >= this.maxRequests) {
+          const oldestRequest = this.requests[0];
+          const waitTime = (oldestRequest + this.timeWindow) - now;
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          return this.waitForAvailableSlot();
+      }
+      
+      this.requests.push(now);
+  }
+}
+
+const rateLimiter = new RateLimiter();
 
 async function processMultipleDocuments(fileUris) {
-    try {
-        const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
-        const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash",
-            generationConfig: {
-                maxOutputTokens: 4096,
-                temperature: 0.4,
-            },
-        });
+  const maxRetries = 3;
+  const baseDelay = 2000; // 2 seconds
 
-        const fileParts = await Promise.all(
-            fileUris.map(async (uri, index) => {
-                try {
-                    const fs = require("fs").promises;
-                    const fileBuffer = await fs.readFile(uri);
-                    const base64Data = fileBuffer.toString("base64");
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+          // Wait for an available rate limit slot
+          await rateLimiter.waitForAvailableSlot();
 
-                    return {
-                        inlineData: {
-                            mimeType: "application/pdf",
-                            data: base64Data,
-                        },
-                    };
-                } catch (error) {
-                    console.error(
-                        `Error processing file ${index + 1} (${uri}):`,
-                        error
-                    );
-                    throw error;
-                }
-            })
-        );
+          const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+          const model = genAI.getGenerativeModel({
+              model: "gemini-1.5-flash",
+              generationConfig: {
+                  maxOutputTokens: 4096,
+                  temperature: 0.4,
+              },
+          });
 
-        // Modified prompt to be more explicit about JSON format
-        // For a more detailed response structure
-        const prompt = `
-Analyze and compare the following documents. 
-First document is the answers and the second document 
-is the questions. Evaluate the answers based on the questions 
-and assign marks accordingly.
+          const fileParts = await Promise.all(
+              fileUris.map(async (uri, index) => {
+                  try {
+                      const fs = require("fs").promises;
+                      const fileBuffer = await fs.readFile(uri);
+                      const base64Data = fileBuffer.toString("base64");
 
-Respond with a JSON object in this exact format:
-{
-    "TotalMarks":number
-    "ObtainedMarks": number,
-    "evaluation": {
-        "totalQuestions": number,
-        "questionsAnswered": number,
-        "detailedMarks": {
-            "question1": {
-            "awarded":"full/parial/none",
-            "right answer":string
-            "obtained answer":string
-            },
-            "question2": {
-            "awarded":"full/parial/none",
-            "right answer":string
-            "obtained answer":string
-            }
-            // ... etc
-        }
-    }
+                      return {
+                          inlineData: {
+                              mimeType: "application/pdf",
+                              data: base64Data,
+                          },
+                      };
+                  } catch (error) {
+                      console.error(`Error processing file ${index + 1} (${uri}):`, error);
+                      throw error;
+                  }
+              })
+          );
+
+          const prompt = `
+              Analyze and compare the following documents. 
+              First document is the answers and the second document 
+              is the questions. Evaluate the answers based on the questions 
+              and assign marks accordingly.
+
+              Respond with a JSON object in this exact format:
+              {
+                  "TotalMarks":number
+                  "ObtainedMarks": number,
+                  "evaluation": {
+                      "totalQuestions": number,
+                      "questionsAnswered": number,
+                      "detailedMarks": {
+                          "question1": {
+                              "awarded":"full/parial/none",
+                              "right answer":string,
+                              "obtained answer":string
+                          },
+                          "question2": {
+                              "awarded":"full/parial/none",
+                              "right answer":string,
+                              "obtained answer":string
+                          }
+                      }
+                  }
+              }
+          `;
+
+          const parts = [{ text: prompt }, ...fileParts];
+          const result = await model.generateContent(parts);
+          const responseText = result.response.text();
+
+          try {
+              const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+              if (!jsonMatch) {
+                  throw new Error("No JSON object found in response");
+              }
+              return JSON.parse(jsonMatch[0]);
+          } catch (parseError) {
+              console.error("Raw response:", responseText);
+              console.error("Error parsing response:", parseError);
+              throw new Error("Failed to parse Gemini response");
+          }
+
+      } catch (error) {
+          if (error.status === 429) {
+              const delay = baseDelay * Math.pow(2, attempt); // exponential backoff
+              console.log("Got the follwoing error: ",error)
+              console.log(`Rate limited. Attempt ${attempt + 1}/${maxRetries}. Waiting ${delay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              
+              if (attempt === maxRetries - 1) {
+                  throw new Error("Maximum retry attempts reached. Please try again later.");
+              }
+              continue;
+          }
+          throw error;
+      }
+  }
 }
-`;
-        const parts = [{ text: prompt }, ...fileParts];
 
-        const result = await model.generateContent(parts);
-        const responseText = result.response.text();
-
-        try {
-            // More robust response cleaning
-            const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error("No JSON object found in response");
-            }
-
-            const jsonStr = jsonMatch[0];
-            console.log("Extracted JSON string:", jsonStr); // Debug log
-
-            return JSON.parse(jsonStr);
-        } catch (error) {
-            console.error("Raw response:", responseText); // Debug log
-            console.error("Error parsing response:", error);
-
-            // Fallback parsing attempt
-            try {
-                // Try to extract just the number
-                const marksMatch = responseText.match(/\d+/);
-                if (marksMatch) {
-                    return { marks: parseInt(marksMatch[0]) };
-                }
-            } catch (fallbackError) {
-                console.error("Fallback parsing also failed:", fallbackError);
-            }
-
-            throw error;
-        }
-    } catch (error) {
-        console.error("Error in processMultipleDocuments:", error);
-        throw error;
-    }
-}
-function parseGeminiResponse(responseText) {
-    try {
-        // Remove markdown code block markers if present
-        const cleanedResponse = responseText
-            .replace(/^```json\s*/, "") // Remove ```json at the start
-            .replace(/```\s*$/, "") // Remove ``` at the end
-            .trim();
-
-        // Parse the cleaned JSON
-        const parsedResponse = JSON.parse(cleanedResponse);
-
-        // Validate the structure
-        if (
-            Array.isArray(parsedResponse) &&
-            parsedResponse.every(
-                (item) =>
-                    item.hasOwnProperty("serial") &&
-                    item.hasOwnProperty("content")
-            )
-        ) {
-            return parsedResponse;
-        } else {
-            throw new Error("Invalid response format");
-        }
-    } catch (error) {
-        console.error("Parsing Error:", error);
-        console.log("Original Response:", responseText);
-
-        // Fallback parsing strategies
-        try {
-            // Try parsing without code block removal
-            return JSON.parse(responseText);
-        } catch (fallbackError) {
-            // Last resort: return as single item array
-            return [
-                {
-                    serial: 1,
-                    content: responseText,
-                },
-            ];
-        }
-    }
-}
 
 module.exports = {
-    parseGeminiResponse,
-    processMultipleDocuments,
+  processMultipleDocuments,
 };

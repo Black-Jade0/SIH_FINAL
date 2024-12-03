@@ -30,7 +30,7 @@ const UploadPageUser = () => {
 
         try {
             const response = await axios.post(
-                BASE_URL + "/user/uploadforevalv",
+                BASE_URL + "/user/uploadforevalv1",
                 formData,
                 {
                     withCredentials: true,
