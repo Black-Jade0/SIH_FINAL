@@ -12,7 +12,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
+        fileSize: 10 * 1024 * 1024, // 10MB limit
     },
     fileFilter: (req, file, cb) => {
         if (file.mimetype === "application/pdf") {
@@ -32,13 +32,15 @@ router.post(
             const { originalname, mimetype, buffer } = req.file;
             const uploaderId = req.userId;
             const body = JSON.parse(req.body.infoFile);
-            const pdf = await prisma.pdf.create({
+            const pdf = await prisma.questionPdf.create({
                 data: {
                     name: originalname,
-                    data: buffer, // Store the file content as Bytes (Blob)
+                    data: buffer, 
                     contentType: mimetype,
                     uploaderId,
-                    subject : body
+                    subject : body.subject,
+                    level:body.level
+
                 },
             });
             res.status(201).json({
@@ -57,7 +59,7 @@ router.get("/pdf/:id", async (req, res) => {
     try {
         const { id } = req.params;
 
-        const pdf = await prisma.pdf.findUnique({
+        const pdf = await prisma.questionPdf.findUnique({
             where: { id },
         });
         if (!pdf) {
@@ -77,7 +79,7 @@ router.get("/pdf/:id", async (req, res) => {
 
 router.get("/pdfs", async (req, res) => {
     try {
-        const pdfs = await prisma.pdf.findMany({
+        const pdfs = await prisma.questionPdf.findMany({
             select: { id: true, name: true, createdAt: true },
         });
 

@@ -9,6 +9,8 @@ import Choice from "./Components/Choice";
 import Edu from "./Educator/edu";
 import User from "./User/user";
 import UploadPageUser from "./User/UploadforEval";
+import UploadEduPdf from "./Educator/EducatorUpload";
+import Tempquestionupload from "./Components/Tempquesetionupload";
 
 function App() {
     return (
@@ -23,7 +25,9 @@ function App() {
                     <Route path="/Choice" element={<Choice />} />
                     <Route path="/Edu" element={<Edu />} />
                     <Route path="/User" element={<User />} />
+                    <Route path="/uploadquestions" element={<UploadEduPdf />} />
                     <Route path="/UploadforEval" element={<UploadPageUser />} />
+                    <Route path="/tempquestionupload" element={<Tempquestionupload />} />
                 </Routes>
             </Router>
         </RecoilRoot>

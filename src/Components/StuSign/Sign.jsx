@@ -26,7 +26,11 @@ const StuSign = () => {
         try {
             const response = await axios.post(
                 `${BASE_URL}/user/signin`,
-                data
+                data,
+                { 
+                    withCredentials: true,
+
+                }
             );
             console.log("Sign-In Response:", response.data);
             navigate("/");
