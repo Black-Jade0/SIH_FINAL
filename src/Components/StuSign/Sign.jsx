@@ -24,14 +24,9 @@ const StuSign = () => {
     // Handle sign-in form submission
     const onSignInSubmit = async (data) => {
         try {
-            const response = await axios.post(
-                `${BASE_URL}/user/signin`,
-                data,
-                { 
-                    withCredentials: true,
-
-                }
-            );
+            const response = await axios.post(`${BASE_URL}/user/signin`, data, {
+                withCredentials: true, // Ensure cookies are included
+            });
             console.log("Sign-In Response:", response.data);
             navigate("/");
             console.log("Sign-In Successful!");
@@ -48,10 +43,9 @@ const StuSign = () => {
     // Handle sign-up form submission
     const onSignUpSubmit = async (data) => {
         try {
-            const response = await axios.post(
-                `${BASE_URL}/user/signup`,
-                data
-            );
+            const response = await axios.post(`${BASE_URL}/user/signup`, data, {
+                withCredentials: true, // Ensure cookies are included
+            });
             console.log("Sign-Up Response:", response.data);
             navigate("/");
             console.log("Sign-Up Successful!");
