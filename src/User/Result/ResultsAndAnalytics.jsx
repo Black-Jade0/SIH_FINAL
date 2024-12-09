@@ -22,8 +22,8 @@ const ResultsAndAnalytics = () => {
 
   return (
     <div className="pt-20 w-full"> {/* Adjust padding top as needed */}
-      <section className="w-full box-border bg-gray-100 p-6 lg:p-10">
-        <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg p-8">
+      <section className="w-full box-border p-6 lg:p-10">
+        <div className="max-w-6xl mx-auto rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-extrabold mb-6 text-center">Results and Analytics</h1>
 
           {/* Candidate Report Section */}

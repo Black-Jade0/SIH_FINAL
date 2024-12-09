@@ -47,17 +47,9 @@ const LandingPage = () => {
                 <div id="dashboard" className="section">
                     <Dashboard />
                 </div>
-                
+
                 <div id="test" className="section">
                     <Test />
-                </div>
-
-                <div id="assessments" className="section">
-                    <AssessmentCreation />
-                </div>
-
-                <div id="accessibility" className="section">
-                    <AccessibilityOptions />
                 </div>
 
                 <div id="reports" className="section">

@@ -29,7 +29,7 @@ const Sidebar = ({ activeSection }) => {
                 <ProfileSection />
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
                         "dashboard"
                     )}`}
                     onClick={() => scrollToSection("dashboard")}
@@ -39,7 +39,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
                         "test"
                     )}`}
                     onClick={() => scrollToSection("test")}
@@ -49,27 +49,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
-                        "assessments"
-                    )}`}
-                    onClick={() => scrollToSection("assessments")}
-                >
-                    <FaFileAlt className="inline mb-1 mr-4" />
-                    Assessment Creation
-                </button>
-
-                <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
-                        "accessibility"
-                    )}`}
-                    onClick={() => scrollToSection("accessibility")}
-                >
-                    <FaAccessibleIcon className="inline mb-1 mr-4" />
-                    Accessibility
-                </button>
-
-                <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "reports"
                     )}`}
                     onClick={() => scrollToSection("reports")}
@@ -79,7 +59,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "resultandanalytics"
                     )}`}
                     onClick={() => scrollToSection("resultandanalytics")}
@@ -89,7 +69,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "support"
                     )}`}
                     onClick={() => scrollToSection("support")}
