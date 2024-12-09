@@ -32,6 +32,138 @@ const tempDir = path.join(__dirname, "temp");
 fs.mkdir(tempDir, { recursive: true }).catch(console.error);
 const questionDir = path.join(__dirname,'questions');
 fs.mkdir(questionDir,{recursive:true}).catch(console.error);
+const rateLimit = require('express-rate-limit');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Create a limiter
+const uploadLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute window
+    max: 5, // limit each IP to 5 requests per windowMs
+    message: 'Too many requests from this IP, please try again after a minute',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function retryWithBackoff(fn, maxRetries = 3) {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (error.status === 429 && i < maxRetries - 1) {
+                const waitTime = Math.pow(2, i) * 1000; // exponential backoff: 1s, 2s, 4s
+                console.log(`Rate limit hit, waiting ${waitTime}ms before retry ${i + 1}`);
+                await wait(waitTime);
+                continue;
+            }
+            throw error;
+        }
+    }
+}
+// Apply the rate limiter to the route
+const tempquestionDir = path.join(__dirname,'questions');
+fs.mkdir(tempquestionDir,{recursive:true}).catch(console.error);
+router.post("/uploadtempquestion", uploadLimiter, upload.single("pdf"), async (req, res) => {
+    const tempquestionFiles = [];
+    let tempquestionFilePath = null;
+
+    try {
+        await cleanupTempDirectory(tempquestionDir);
+        if (!req.file) {
+            throw new Error("No file uploaded");
+        }
+        const { originalname, buffer, mimetype } = req.file;
+        
+        tempquestionFilePath = path.join(tempquestionDir, `${Date.now()}-${originalname}`);
+        await fs.writeFile(tempquestionFilePath, buffer);
+        
+        const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash",
+        });
+
+        // Wrap the Gemini API call in the retry logic
+        const result = await retryWithBackoff(async () => {
+            return await model.generateContent([
+                {
+                    fileData: {
+                        mimeType: mimetype,
+                        fileUri: tempquestionFilePath,
+                    },
+                },
+                { text: `Please convert the questions in this file into a structured JSON format. Each question should be represented as a detailed object with the following attributes:
+
+Base attributes (required for all questions):
+
+Unique ID and serial number (e.g., Q1, Q2)
+Question type (multiple choice, fill in blank, true/false, passage-based, etc.)
+Question text
+Marks/points allocated
+Difficulty level (easy/medium/hard)
+
+Type-specific attributes:
+
+For passage-based questions:
+
+Include the full passage text
+Passage title (if available)
+Source attribution (if available)
+
+For multiple choice questions:
+
+Array of options with ID and text
+Correct answer reference
+
+For other question types:
+
+Relevant specific attributes
+
+Optional attributes:
+
+Topic tags
+Specific instructions
+Time recommended (if applicable)
+
+Include metadata about the entire question set:
+
+Total number of questions
+Total marks
+Overall time limit
+General instructions
+Subject/topic information
+
+Please preserve any formatting, mathematical equations, or special characters in the question text. The output should be valid JSON that can be parsed programmatically.` }, // Your existing prompt
+            ]);
+        });
+
+        const responseText = result.response.text();
+        try {
+            const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) {
+                throw new Error("No JSON object found in response");
+            }
+            return JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+            console.error("Raw response:", responseText);
+            console.error("Error parsing response:", parseError);
+            throw new Error("Failed to parse Gemini response");
+        }
+
+    } catch (error) {
+        console.log("Got the following error while uploading and parsing file: ", error);
+        // Send appropriate status code based on error type
+        const statusCode = error.status === 429 ? 429 : 400;
+        res.status(statusCode).json({
+            message: error.message || "An error occurred",
+            error: process.env.NODE_ENV === 'development' ? error : undefined
+        });
+    } finally {
+        // Cleanup logic if needed
+        if (tempquestionFilePath && await fs.access(tempquestionFilePath).catch(() => false)) {
+            await fs.unlink(tempquestionFilePath).catch(console.error);
+        }
+    }
+});
 
 router.post("/uploadforevalv1", upload.single("pdf"), async (req, res) => {
     const tempFiles = [];
