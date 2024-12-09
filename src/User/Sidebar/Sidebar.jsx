@@ -19,26 +19,17 @@ const Sidebar = ({ activeSection }) => {
 
     const getActiveClass = (id) => {
         return activeSection === id
-            ? "bg-gray-600 rounded-md text-white"
-            : "bg-gray-900 text-gray-400";
+            ? "bg-[var(--main-color)] rounded-md text-white"
+            : "text-gray-400";
     };
 
     return (
-        <div className="h-screen bg-gray-900 w-[15%] sticky top-0 left-0 shadow-lg">
-            <div className="mt-4">
+        <div className="h-screen w-[15%] sticky top-0 left-0 shadow-lg pr-2 pl-2">
+            <div className="mt-4 flex flex-col gap-1 h-full items-center">
                 <ProfileSection />
-                <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
-                        "home"
-                    )}`}
-                    onClick={() => scrollToSection("home")}
-                >
-                    <FaHome className="inline mb-1 mr-4" />
-                    Home
-                </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
                         "dashboard"
                     )}`}
                     onClick={() => scrollToSection("dashboard")}
@@ -48,17 +39,27 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                        "test"
+                    )}`}
+                    onClick={() => scrollToSection("test")}
+                >
+                    <FaChartBar className="inline mb-1 mr-4" />
+                    Test
+                </button>
+
+                <button
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "assessments"
                     )}`}
                     onClick={() => scrollToSection("assessments")}
                 >
                     <FaFileAlt className="inline mb-1 mr-4" />
-                    Assessments
+                    Assessment Creation
                 </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "accessibility"
                     )}`}
                     onClick={() => scrollToSection("accessibility")}
@@ -68,7 +69,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "reports"
                     )}`}
                     onClick={() => scrollToSection("reports")}
@@ -78,7 +79,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "resultandanalytics"
                     )}`}
                     onClick={() => scrollToSection("resultandanalytics")}
@@ -88,7 +89,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-4 hover:bg-gray-600 rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "support"
                     )}`}
                     onClick={() => scrollToSection("support")}
