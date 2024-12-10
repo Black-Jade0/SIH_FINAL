@@ -6,7 +6,8 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const { authMiddleware } = require("../middleware");
 const { JWT_PASSWORD } = require("../config");
-
+const fs = require("fs").promises;
+const path = require("path");
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -22,13 +23,49 @@ const upload = multer({
         }
     },
 });
+const uploadQuestionDir = path.join(__dirname,'eduquestions');
+fs.mkdir(uploadQuestionDir,{recursive:true}).catch(console.error);
+const rateLimit = require('express-rate-limit');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { cleanupTempDirectory } = require("../utility/cleanupfunction");
+
+// Create a limiter
+const uploadLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute window
+    max: 5, // limit each IP to 5 requests per windowMs
+    message: 'Too many requests from this IP, please try again after a minute',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function retryWithBackoff(fn, maxRetries = 3) {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (error.status === 429 && i < maxRetries - 1) {
+                const waitTime = Math.pow(2, i) * 1000; // exponential backoff: 1s, 2s, 4s
+                console.log(`Rate limit hit, waiting ${waitTime}ms before retry ${i + 1}`);
+                await wait(waitTime);
+                continue;
+            }
+            throw error;
+        }
+    }
+}
 
 router.post(
     "/uploadquestions",
     authMiddleware,
     upload.single("pdf"),
     async (req, res) => {
+        let uploadQuestionFilePath=null;
         try {
+            await cleanupTempDirectory(uploadQuestionDir);
+        if (!req.file) {
+            throw new Error("No file uploaded");
+        }
             const { originalname, mimetype, buffer } = req.file;
             const uploaderId = req.userId;
             const body = JSON.parse(req.body.infoFile);
@@ -43,12 +80,95 @@ router.post(
 
                 },
             });
+            uploadQuestionFilePath = path.join(uploadQuestionDir,`${Date.now()}-${originalname}`);
+            await fs.writeFile(uploadQuestionFilePath,buffer);
+            const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+            const model = genAI.getGenerativeModel({
+                model: "gemini-1.5-flash",
+            });
+            const result = await retryWithBackoff(async () => {
+                return await model.generateContent([
+                    {
+                        inlineData: {
+                            mimeType: mimetype,
+                            data: buffer.toString('base64')  // Convert buffer to base64
+                        },
+                    },
+                    {
+                        text: `Extract all questions from this file and convert them into JSON format with this structure:
+            {
+              "questions": [
+                {
+                  "id": "Q1",
+                  "type": "multiple_choice|passage_based|true_false|fill_in_blank",
+                  "text": "question text",
+                  "marks": number,
+                  "difficulty": "easy|medium|hard",
+                  "options": [
+                    {"id": "a", "text": "option text"},
+                    {"id": "b", "text": "option text"}
+                  ],
+                  "correctAnswer": "a",
+                  "passage": {
+                    "text": "passage text if applicable",
+                    "title": "optional title"
+                  }
+                }
+              ],
+              "metadata": {
+                "totalQuestions": number,
+                "totalMarks": number,
+                "timeLimit": number,
+                "subject": "subject name"
+              }
+            }
+            
+            Important: Return ONLY valid JSON without any additional text, comments or explanations.`
+                    }
+                ]);
+            });
+                const responseText = result.response.text();
+                
+                // Clean the response text to ensure it's valid JSON
+                const cleanedText = responseText
+                    .replace(/\/\/.*/g, '') // Remove single-line comments
+                    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
+                    .replace(/[\n\r\t]/g, '') // Remove newlines, carriage returns, and tabs
+                    .trim();
+                
+                // Try to find a valid JSON object
+                const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("No JSON object found in response");
+                }
+                
+                const parsedJson = JSON.parse(jsonMatch[0]);
+                
+                // Validate the required structure
+                if (!parsedJson.questions || !Array.isArray(parsedJson.questions)) {
+                    throw new Error("Invalid JSON structure: missing questions array");
+                }
+                
+            const parsedPdf = await prisma.questionParsed.create({
+                data: {
+                    data:parsedJson,
+                    uploaderId,
+                    subject : body.subject,
+                    level:body.level
+
+                }
+            });
+            console.error("Raw response:", responseText);
+            console.log("Parsed value: ",JSON.parse(jsonMatch[0]));
             res.status(201).json({
                 message: "PDF uploaded successfully!",
                 pdf,
+                parsedPdf
             });
             console.log({ message: "PDF uploaded successfully!", pdf });
+
         } catch (error) {
+            
             console.error(error);
             res.status(500).json({ message: "Error uploading PDF" });
         }
