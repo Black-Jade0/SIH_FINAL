@@ -67,12 +67,12 @@
 #root {
     scrollbar-width: 0;
     scrollbar-width: 0;
-    --main-color: rgb(106, 30, 85);
-    --text-color: rgb(236, 204, 229);
+    --main-color: rgb(33, 34, 45);
+    --text-color: rgb(219, 219, 219);
     --background-color: rgb(26, 26, 29);
-    --boom-color: rgb(166, 77, 121);
-    --border-thin: rgb(233, 204, 236);
-    --border-thick:rgb(232, 219, 236);
+    --boom-color: rgb(194, 112, 18);
+    --border-thin: rgb(208, 208, 208);
+    --border-thick:rgb(226, 226, 226);
     margin: 0;
     padding: 0;
 }

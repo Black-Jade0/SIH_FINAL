@@ -15,6 +15,8 @@ app.use(
 
 const userRouter = require("./routes/user");
 const eduRouter = require("./routes/edu");
+const unsplashHandler = require("./routes/unsplash/unsplash");
+app.use("/images", unsplashHandler);
 
 app.use("/user",userRouter);
 app.use("/edu",eduRouter);
