@@ -154,7 +154,6 @@ Please preserve any formatting, mathematical equations, or special characters in
         // Send appropriate status code based on error type
         const statusCode = error.status === 429 ? 429 : 400;
         res.status(statusCode).json({
-            message: error.message || "An error occurred",
             error: process.env.NODE_ENV === 'development' ? error : undefined
         });
     } finally {
