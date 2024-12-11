@@ -3,7 +3,6 @@ import { BASE_URL } from "../../../config";
 import { useNavigate } from "react-router-dom";
 import TestSelection from "../../Test/TestSelection";
 import axios from "axios";
-import TestSelection from "../../Test/TestSelection";
 
 const Test = () => {
     const [pdfs, setPdfs] = useState([]);
@@ -80,7 +79,7 @@ const Test = () => {
                     <h2 className="text-3xl text-left font-extrabold mt-4">
                         Your Tests
                     </h2>
-                    <ul className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <ul className="pt-8 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {pdfs.map((pdf) => (
                             <li
                                 key={pdf.id}
@@ -135,9 +134,6 @@ const Test = () => {
                     <TestSelection/>
                 </>
             )}
-            <>
-                <TestSelection></TestSelection>
-            </>
         </section>
     );
 };

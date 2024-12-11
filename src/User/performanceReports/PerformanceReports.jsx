@@ -26,7 +26,7 @@ const PerformanceReports = () => {
     ];
 
     return (
-        <div className="pt-20 w-full">
+        <div className="w-full">
             <section className="w-full box-border p-6 lg:p-10">
                 <div className="rounded-lg shadow-lg p-8">
                     <h1 className="text-3xl font-extrabold mb-6 text-center">

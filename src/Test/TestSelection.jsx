@@ -63,6 +63,7 @@ const TestSelection = ()=>{
     const [level, setLevel] = useState("");
     const [data,setData] = useState();
     const requestsender = async (id,subject,level)=>{
+        console.log("got here: ",id)
         const response = await axios.get(BASE_URL+'/user/getparseddata2',{
             withCredentials:true
         },{
@@ -85,7 +86,7 @@ const TestSelection = ()=>{
         });
     }
 return (
-    <section className="w-full h-screen box-border p-6 lg:p-10">
+    <section className="w-full box-border p-6 lg:p-10">
         {error ? (
             <p className="text-red-500">{error}</p>
         ) : (
