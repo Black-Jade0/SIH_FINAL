@@ -321,7 +321,7 @@ router.get('/getparseddata',async (req,res)=>{
         console.log("Got the error: ",error);
         res.status(411).json({message:"Failed to get parsed data"});
     }
-})
+});
 router.post("/submitanswer",authMiddleware, async (req,res) => {
     const body = req.body;
     const userId = req.userId;

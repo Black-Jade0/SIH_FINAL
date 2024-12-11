@@ -12,8 +12,8 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
 
     const getActiveClass = (id) => {
         return activeSection === id
-            ? "bg-[var(--main-color)] text-white transition-colors duration-500 rounded-md"
-            : "text-gray-400 transition-colors duration-500";
+            ? "bg-[var(--sidebarselect-color)] transition-colors duration-500 rounded-md"
+            : "transition-colors duration-500";
     };
 
     // Update activeSection on scroll
@@ -43,22 +43,22 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
     }, [setActiveSection]);
 
     return (
-        <div className="h-screen w-[15%] sticky top-0 left-0 shadow-lg pr-2 pl-2">
+        <div className="h-screen w-[15%] sticky top-0 left-0 shadow-lg pr-2 pl-2 bg-[var(--sidebar-color)]">
             <div className="mt-4 flex flex-col gap-1 h-full items-center">
                 <ProfileSection />
 
-                <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                {/* <button
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
                         "dashboard"
                     )}`}
                     onClick={() => scrollToSection("dashboard")}
                 >
                     <FaChartBar className="inline mb-1 mr-4" />
                     Dashboard
-                </button>
+                </button> */}
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  ${getActiveClass(
                         "test"
                     )}`}
                     onClick={() => scrollToSection("test")}
@@ -68,7 +68,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
                         "reports"
                     )}`}
                     onClick={() => scrollToSection("reports")}
@@ -78,7 +78,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
                         "resultandanalytics"
                     )}`}
                     onClick={() => scrollToSection("resultandanalytics")}
@@ -88,7 +88,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
                         "support"
                     )}`}
                     onClick={() => scrollToSection("support")}
