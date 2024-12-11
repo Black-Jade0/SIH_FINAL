@@ -5,8 +5,12 @@ import MultipleChoiceQuestion from './MultipleChoiceQuestion';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
 import Result from './Result';
+import { useLocation } from 'react-router-dom';
 
-const QuestionPaper = ({ data,subject,level }) => {
+const QuestionPaper = () => {
+  const location = useLocation();
+  const { data, subject, level } = location.state;
+  console.log("Rec. states ",data);
     const [answers, setAnswers] = useState({});
     const [result , setResult] = useState();
     const handleAnswerChange = (questionId, answer) => {
@@ -17,7 +21,7 @@ const QuestionPaper = ({ data,subject,level }) => {
     };
     
     const submitAnswer = async ()=>{
-        console.log("Got the user's answer !:", answers)
+
         try{
           const response = await axios.post(BASE_URL+'/user/submitanswer',{
             answers:answers,
