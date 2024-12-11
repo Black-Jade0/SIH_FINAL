@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../../../config";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Test = () => {
     const [pdfs, setPdfs] = useState([]);
     const [error, setError] = useState("");
     const [images, setImages] = useState({}); // Store images for each subject
+    const navigate = useNavigate(); // Initialize the navigate function
 
     useEffect(() => {
         const fetchPdfs = async () => {
@@ -55,18 +57,37 @@ const Test = () => {
         fetchPdfs();
     }, []);
 
+    const navigateInstruction = (id, level, subject) => {
+        try {
+            navigate(
+                `/User/Test/instructions?id=${id}&level=${level}&subject=${subject}`
+            );
+        } catch (error) {
+            console.error("Error navigating to instructions page:", error);
+        }
+    };
+
     return (
         <section className="w-full h-screen box-border p-6 lg:p-10">
             {error ? (
                 <p className="text-red-500">{error}</p>
             ) : (
                 <>
-                    <h2 className="text-3xl text-left font-extrabold mt-4">Your Tests</h2>
+                    <h2 className="text-3xl text-left font-extrabold mt-4">
+                        Your Tests
+                    </h2>
                     <ul className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {pdfs.map((pdf) => (
                             <li
                                 key={pdf.id}
-                                className="flex flex-col gap-2 bg-[var(--main-color)] rounded-lg shadow-lg p-4 hover:shadow-2xl transition-shadow"
+                                onClick={() => {
+                                    navigateInstruction(
+                                        pdf.id,
+                                        pdf.level,
+                                        pdf.subject
+                                    );
+                                }}
+                                className="hover:cursor-pointer flex flex-col gap-2 bg-[var(--main-color)] rounded-lg shadow-lg p-4 hover:shadow-2xl transition-shadow"
                             >
                                 <div className="h-40 w-full rounded mb-4 overflow-hidden">
                                     {images[pdf.subject] ? (

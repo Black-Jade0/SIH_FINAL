@@ -371,4 +371,27 @@ router.get("/pdfs", async (req, res) => {
         res.status(500).json({ message: "Error fetching PDFs" });
     }
 });
+router.get("/pdf/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        
+        const pdf = await prisma.questionPdf.findUnique({
+            where: { id },
+        });
+        if (!pdf) {
+            return res.status(404).json({ message: "PDF not found" });
+        }
+        res.setHeader("Content-Type", pdf.contentType); // Ensures it's recognized as a PDF
+        res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="${pdf.name}"`
+        ); // Prompts download
+        res.send(pdf.data); // Send the binary data
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching PDF" });
+    }
+});
+
 module.exports = router;

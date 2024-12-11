@@ -33,10 +33,10 @@ const ResultsAndAnalytics = () => {
                 <h1 className="text-3xl font-extrabold mb-6 text-center">
                     Results and Analytics
                 </h1>
-                <div className="flex flex-row flex-wrap rounded-lg shadow-lg p-8">
+                <div className="flex flex-row flex-wrap rounded-lg shadow-lg p-8 h-full">
                     {/* Candidate Report Section */}
-                    <div className="w-[40%] p-2">
-                        <div className="bg-[var(--main-color)] rounded-lg shadow-lg p-6">
+                    <div className="w-[40%] p-2 flex flex-col h-full">
+                        <div className="bg-[var(--main-color)] rounded-lg shadow-lg p-6 h-full">
                             <h2 className="text-xl font-bold mb-4 flex items-center">
                                 <FaChartLine className="mr-2 text-2xl" />{" "}
                                 Candidate Report
@@ -77,8 +77,8 @@ const ResultsAndAnalytics = () => {
                     </div>
 
                     {/* Group Analysis Section */}
-                    <div className="w-[60%] p-2 h-full">
-                        <div className="bg-[var(--main-color)] h-full rounded-lg shadow-lg p-6 mb-6">
+                    <div className="w-[60%] p-2 flex flex-col h-full">
+                        <div className="bg-[var(--main-color)] h-full rounded-lg shadow-lg p-6 mb-6 flex flex-col">
                             <h2 className="text-xl font-bold mb-4 flex items-center">
                                 <FaUsers className="mr-2 text-2xl" /> Group
                                 Analysis
