@@ -16,6 +16,7 @@ import Uploadans from "./User/test/Uploadans";
 import Evaluation from "./User/Result/Evaluation";
 import SpeechToText from "./Components/SpeechToText";
 import TestSelection from "./Test/TestSelection";
+import QuestionPaper from "./Test/OnlineTest";
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                     <Route path="/User/Evaluation" element={<Evaluation />} />
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
+                    <Route path="/question-paper" element={<QuestionPaper />} />
                 </Routes>
             </Router>
         </RecoilRoot>

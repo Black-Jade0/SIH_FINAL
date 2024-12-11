@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../../../config";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TestSelection from "../../Test/TestSelection";
 
 const Test = () => {
     const [pdfs, setPdfs] = useState([]);
@@ -128,6 +129,7 @@ const Test = () => {
                             </li>
                         ))}
                     </ul>
+                    <TestSelection/>
                 </>
             )}
         </section>

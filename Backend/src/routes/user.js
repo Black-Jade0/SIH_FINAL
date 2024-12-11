@@ -322,6 +322,22 @@ router.get('/getparseddata',async (req,res)=>{
         res.status(411).json({message:"Failed to get parsed data"});
     }
 })
+router.get('/getparseddata2',async (req,res)=>{
+    const body = req.body;
+    try{
+        const parseddata = await prisma.questionParsed.findFirst({
+            where:{
+                id:body.id,
+                subject:body.subject,
+                level:body.level
+            }
+        });
+        res.json(parseddata);
+    } catch(error){
+        console.log("Got the error: ",error);
+        res.status(411).json({message:"Failed to get parsed data"});
+    }
+})
 router.post("/submitanswer",authMiddleware, async (req,res) => {
     const body = req.body;
     const userId = req.userId;
