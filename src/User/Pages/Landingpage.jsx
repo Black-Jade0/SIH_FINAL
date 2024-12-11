@@ -44,9 +44,9 @@ const LandingPage = () => {
 
             {/* Main Content */}
             <div className="flex flex-col w-[85%] right-0  min-h-screen">
-                <div id="dashboard" className="section w-full">
+                {/* <div id="dashboard" className="section w-full">
                     <Dashboard />
-                </div>
+                </div> */}
 
                 <div id="test" className="section w-full">
                     <Test />

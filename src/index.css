@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer utilities {
-
     .gap-14 {
         gap: 3.5rem; /* Default gap */
     }
@@ -13,7 +12,7 @@
             gap: 1.5rem; /* For smaller screens */
         }
     }
-    
+
     @keyframes grow-height-box {
         0% {
             height: 30%;
@@ -67,12 +66,14 @@
 #root {
     scrollbar-width: 0;
     scrollbar-width: 0;
-    --main-color: rgb(33, 34, 45);
+    --main-color: rgb(59 130 246);
     --text-color: rgb(255, 255, 255);
-    --background-color: rgb(26, 26, 29);
-    --boom-color: rgb(194, 112, 18);
+    --background-color: rgb(128, 170, 239);
+    --boom-color: #001429;
     --border-thin: rgb(208, 208, 208);
-    --border-thick:rgb(226, 226, 226);
+    --border-thick: rgb(226, 226, 226);
+    --sidebarselect-color : rgb(79, 84, 97);
+    --sidebar-color:#001429;
     margin: 0;
     padding: 0;
 }
@@ -81,7 +82,7 @@
     padding: 0;
 }
 html {
-    background-color: rgb(26, 26, 29);
+    background-color: rgb(128, 170, 239);
     color: rgb(255, 255, 255);
 
     scrollbar-width: none;
