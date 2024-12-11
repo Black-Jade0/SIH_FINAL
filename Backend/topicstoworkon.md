@@ -1,0 +1,1 @@
+# 1 Ask user to enter any vocational skill, then we will generate questions on that skills and store user's answer for that and then evaluate 

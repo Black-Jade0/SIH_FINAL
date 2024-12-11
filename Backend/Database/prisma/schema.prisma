@@ -24,16 +24,12 @@ model UserSchema {
 
 model UserDetail {
   id                    String     @id @default(auto()) @map("_id") @db.ObjectId
-  lat                   String?
-  long                  String?
   userId                String     @unique @db.ObjectId
   phone                 Int
-  state                 String
   currentstd            String
   age                   Int
   gender                String
   fieldofinterest       String
-  socialmedia           Json?
   Stemresponse          Json?
   Interestbasedresponse Json?
   userschema            UserSchema @relation(fields: [userId], references: [id])
@@ -73,4 +69,12 @@ model QuestionParsed {
   subject     String
   level       String
   uploaderId  String
+}
+
+model Answer {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers     Json
+  subject     String
+  level       String
+  userId      String
 }

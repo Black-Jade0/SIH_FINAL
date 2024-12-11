@@ -38,11 +38,12 @@ const PdfList = () => {
 
     return (
         <div>
-            <h1>Uploaded PDFs</h1>
             <ul>
                 {pdfs.map((pdf) => (
                     <li key={pdf.id}>
                         <span>{pdf.name}</span>
+                      <div>Subject: <span>{pdf.subject}</span></div> 
+                       Level: <span>{pdf.level}</span>
                         <button onClick={() => handleDownload(pdf.id, pdf.name)}>Download</button>
                     </li>
                 ))}

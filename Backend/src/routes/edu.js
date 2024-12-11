@@ -95,35 +95,44 @@ router.post(
                         },
                     },
                     {
-                        text: `Extract all questions from this file and convert them into JSON format with this structure:
-            {
-              "questions": [
-                {
-                  "id": "Q1",
-                  "type": "multiple_choice|passage_based|true_false|fill_in_blank",
-                  "text": "question text",
-                  "marks": number,
-                  "difficulty": "easy|medium|hard",
-                  "options": [
-                    {"id": "a", "text": "option text"},
-                    {"id": "b", "text": "option text"}
-                  ],
-                  "correctAnswer": "a",
-                  "passage": {
-                    "text": "passage text if applicable",
-                    "title": "optional title"
-                  }
-                }
-              ],
-              "metadata": {
-                "totalQuestions": number,
-                "totalMarks": number,
-                "timeLimit": number,
-                "subject": "subject name"
-              }
-            }
-            
-            Important: Return ONLY valid JSON without any additional text, comments or explanations.`
+                        text: `Extract all questions and passages from this file and convert them into JSON format with this structure:
+                    {
+                    "passages": [
+                        {
+                        "id": "P1",
+                        "text": "full passage text here",
+                        "title": "passage title if available",
+                        "source": "source if available"
+                        }
+                    ],
+                    "questions": [
+                        {
+                        "id": "1",
+                        "type": "multiple_choice|passage_based|true_false|fill_in_blank",
+                        "text": "question text",
+                        "marks": number,
+                        "passageRef": "P1",  // Reference to the passage if question is passage-based
+                        "options": [
+                            {"id": "a", "text": "option text"},
+                            {"id": "b", "text": "option text"}
+                        ],
+                        "correctAnswer": "a"
+                        }
+                    ],
+                    "metadata": {
+                        "totalQuestions": number,
+                        "totalPassages": number,
+                        "totalMarks": number,
+                        "timeLimit": number,
+                        "subject": "subject name",
+                        "topic": "topic name if available"
+                    }
+                    }
+                    Rules:
+                    1. Each passage should be stored once in the passages array
+                    2. Questions should reference their passage using passageRef
+                    3. For non-passage questions, omit the passageRef field
+                    4. Return ONLY valid JSON without any additional text or comments`
                     }
                 ]);
             });
@@ -200,7 +209,7 @@ router.get("/pdf/:id", async (req, res) => {
 router.get("/pdfs", async (req, res) => {
     try {
         const pdfs = await prisma.questionPdf.findMany({
-            select: { id: true, name: true, createdAt: true },
+            select: { id: true, name: true, createdAt: true,subject:true,level:true },
         });
 
         res.status(200).json(pdfs);

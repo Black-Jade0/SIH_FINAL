@@ -11,6 +11,8 @@ import User from "./User/user";
 import UploadPageUser from "./User/UploadforEval";
 import UploadEduPdf from "./Educator/EducatorUpload";
 import Tempquestionupload from "./Components/Tempquesetionupload";
+import SpeechToText from "./Components/SpeechToText";
+import TestSelection from "./Test/TestSelection";
 
 function App() {
     return (
@@ -28,6 +30,8 @@ function App() {
                     <Route path="/uploadquestions" element={<UploadEduPdf />} />
                     <Route path="/UploadforEval" element={<UploadPageUser />} />
                     <Route path="/tempquestionupload" element={<Tempquestionupload />} />
+                    <Route path="/speechtotext" element={<SpeechToText />} />
+                    <Route path="/onlinetest" element={<TestSelection />} />
                 </Routes>
             </Router>
         </RecoilRoot>
