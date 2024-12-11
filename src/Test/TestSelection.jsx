@@ -29,7 +29,7 @@ const TestSelection = () => {
     if (data) {
         return (
             <>
-                <QuestionPaper data={data.data} />
+                <QuestionPaper data={data.data} subject={subject} level={level} />
             </>
         );
     }
