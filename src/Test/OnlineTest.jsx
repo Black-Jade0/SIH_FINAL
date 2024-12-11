@@ -11,7 +11,7 @@ const QuestionPaper = () => {
   const location = useLocation();
   const { data, subject, level } = location.state;
   console.log("Rec. states ",data);
-    const [answers, setAnswers] = useState({});
+    const [answers, setAnswers] = useState();
     const [result , setResult] = useState();
     const handleAnswerChange = (questionId, answer) => {
       setAnswers(prev => ({
@@ -30,7 +30,7 @@ const QuestionPaper = () => {
           },{
             withCredentials: true,
           });
-          setResult(response.data.result);
+          setResult(response.data.evaluatedresponse);
         } catch (error){
           console.log("Got the following error: ",error)
         }
