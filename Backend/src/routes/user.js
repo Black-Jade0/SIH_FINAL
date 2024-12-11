@@ -329,17 +329,79 @@ router.post("/submitanswer",authMiddleware, async (req,res) => {
     try{
         const answerbyuser = await prisma.answer.create({
             data:{
-                answers:body.answer,
+                answers:body.answers,
                 userId,
                 subject:body.subject,
                 level:body.level
             }
         });
-        //send the answer to gemini for evaluation 
+ 
         if(!answerbyuser){
             throw error("Unable to create record");
         }
-        res.json({message:"Answer uploaded"})
+        let result = null;
+        //need to send answers and questions to google for evaluation
+        //questions are needed to be fetched from parsedquestion table of db
+        const questionforrequiredanswer = await prisma.questionParsed.findFirst({
+            where:{
+                subject:body.subject,
+                level:body.level
+            }
+        });
+
+        try{
+            if (!answerbyuser || !questionforrequiredanswer) {
+                throw new Error("Both questions and answers data are required");
+            }
+            let totalMarks = 0;
+            totalMarks = questionforrequiredanswer.data.metadata.totalMarks;
+            const evaluationPrompt = `
+You are an expert evaluator. Evaluate the following answers based on the provided questions.
+Please provide:
+1. Total marks obtained out of ${totalPossibleMarks} 
+2. A brief summary of overall performance (2-3 sentences maximum)
+
+Questions:
+${JSON.stringify(questionsData, null, 2)}
+
+Student Answers:
+${JSON.stringify(answersData, null, 2)}
+
+ Respond with a JSON object in this exact format:
+{
+    "obtainedMarks": 75,
+    "totalMarks": 100,
+    "summary": "Overall good performance with strong understanding of core concepts. Some minor improvements needed in detail and explanation."
+}
+`;
+//add rate limiting !
+const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+          const model = genAI.getGenerativeModel({
+              model: "gemini-1.5-flash",
+              generationConfig: {
+                  maxOutputTokens: 4096,
+                  temperature: 0.4,
+              },
+          });
+          const result = await model.generateContent(evaluationPrompt);
+          const responseText = result.response.text();
+          try {
+            const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) {
+                throw new Error("No JSON object found in response");
+            }
+            res.json({message:"Answer uploaded",evaluatedresponse:JSON.parse(jsonMatch[0])});
+        } catch (parseError) {
+            console.error("Raw response:", responseText);
+            console.error("Error parsing response:", parseError);
+            throw new Error("Failed to parse Gemini response");
+        }
+
+        } catch(error){
+            console.log("got the following error: ",error);
+
+        }
+
     } catch(error){
         console.log("Got the following error: ",error);
         res.status(500).json({message:"Failed to submit answer"});

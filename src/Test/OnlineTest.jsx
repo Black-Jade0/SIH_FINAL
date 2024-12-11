@@ -4,31 +4,38 @@ import TextAnswerQuestion from './TextAnswerQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion';
 import axios from 'axios';
 import { BASE_URL } from '../../config';
+import Result from './Result';
 
-const QuestionPaper = ({ data }) => {
+const QuestionPaper = ({ data,subject,level }) => {
     const [answers, setAnswers] = useState({});
-  
+    const [result , setResult] = useState();
     const handleAnswerChange = (questionId, answer) => {
       setAnswers(prev => ({
         ...prev,
         [questionId]: answer
       }));
     };
-
+    
     const submitAnswer = async ()=>{
         console.log("Got the user's answer !:", answers)
         try{
           const response = await axios.post(BASE_URL+'/user/submitanswer',{
-            answers:answers, //have to send subject and level also !
+            answers:answers,
+            subject:subject,
+            level:level                //have to send subject and level also !
           },{
             withCredentials: true,
           });
-
+          setResult(response.data.result);
         } catch (error){
           console.log("Got the following error: ",error)
         }
     }
-  
+  if(result){
+    return <>
+    <Result data={result}/>
+    </>
+  }
     return (
       <div className="max-w-4xl mx-auto p-6">
         {/* Passages Section */}
