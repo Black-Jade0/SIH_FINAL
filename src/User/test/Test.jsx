@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../../../config";
 import { useNavigate } from "react-router-dom";
+import TestSelection from "../../Test/TestSelection";
 import axios from "axios";
 
 const Test = () => {
@@ -12,7 +13,9 @@ const Test = () => {
     useEffect(() => {
         const fetchPdfs = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/user/pdfs`);
+                const response = await axios.get(`${BASE_URL}/user/pdfs`, {
+                    withCredentials: true,
+                });
                 setPdfs(response.data);
 
                 // Fetch images for all subjects
@@ -68,7 +71,7 @@ const Test = () => {
     };
 
     return (
-        <section className="w-full h-screen box-border p-6 lg:p-10">
+        <section className="w-full box-border p-6 lg:p-10">
             {error ? (
                 <p className="text-red-500">{error}</p>
             ) : (
@@ -130,6 +133,9 @@ const Test = () => {
                     </ul>
                 </>
             )}
+            <>
+                <TestSelection></TestSelection>
+            </>
         </section>
     );
 };
