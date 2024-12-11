@@ -64,7 +64,12 @@ const Uploadans = () => {
 
             if (response.data.success) {
                 alert("Answer PDF uploaded successfully!");
-                navigate("/User/Evaluation");
+                
+                navigate('/User/Evaluation', { 
+                    state: { 
+                        data: response.data.data
+                    }
+                });
             } else {
                 throw new Error(response.data.error || "Upload failed");
             }
