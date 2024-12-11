@@ -34,6 +34,7 @@ const questionDir = path.join(__dirname,'questions');
 fs.mkdir(questionDir,{recursive:true}).catch(console.error);
 const rateLimit = require('express-rate-limit');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { error } = require("console");
 
 // Create a limiter
 const uploadLimiter = rateLimit({
@@ -306,6 +307,44 @@ router.post("/signin", async (req, res) => {
         });
     }
 });
+router.get('/getparseddata',async (req,res)=>{
+    const body = req.body;
+    try{
+        const parseddata = await prisma.questionParsed.findFirst({
+            where:{
+                subject:body.subject,
+                level:body.level
+            }
+        });
+        res.json(parseddata);
+    } catch(error){
+        console.log("Got the error: ",error);
+        res.status(411).json({message:"Failed to get parsed data"});
+    }
+})
+router.post("/submitanswer",authMiddleware, async (req,res) => {
+    const body = req.body;
+    const userId = req.userId;
+    console.log("Got the answer at backend: ",body);
+    try{
+        const answerbyuser = await prisma.answer.create({
+            data:{
+                answers:body.answer,
+                userId,
+                subject:body.subject,
+                level:body.level
+            }
+        });
+        //send the answer to gemini for evaluation 
+        if(!answerbyuser){
+            throw error("Unable to create record");
+        }
+        res.json({message:"Answer uploaded"})
+    } catch(error){
+        console.log("Got the following error: ",error);
+        res.status(500).json({message:"Failed to submit answer"});
+    }
+})
 router.post("/profilesetup", authMiddleware, async (req, res) => {
     const body = req.body;
     const userId = req.userId;

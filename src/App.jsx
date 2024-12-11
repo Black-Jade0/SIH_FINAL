@@ -14,6 +14,8 @@ import Tempquestionupload from "./Components/Tempquesetionupload";
 import InstructionPage from "./User/test/Instruction";
 import Uploadans from "./User/test/Uploadans";
 import Evaluation from "./User/Result/Evaluation";
+import SpeechToText from "./Components/SpeechToText";
+import TestSelection from "./Test/TestSelection";
 
 function App() {
     return (
@@ -34,6 +36,8 @@ function App() {
                     <Route path="/User/Test/instructions" element={<InstructionPage />} />
                     <Route path="/User/Test/uploadans" element={<Uploadans />} />
                     <Route path="/User/Evaluation" element={<Evaluation />} />
+                    <Route path="/speechtotext" element={<SpeechToText />} />
+                    <Route path="/onlinetest" element={<TestSelection />} />
                 </Routes>
             </Router>
         </RecoilRoot>
