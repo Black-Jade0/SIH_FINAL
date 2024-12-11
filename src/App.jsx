@@ -13,11 +13,11 @@ import UploadEduPdf from "./Educator/EducatorUpload";
 import Tempquestionupload from "./Components/Tempquesetionupload";
 import InstructionPage from "./User/test/Instruction";
 import Uploadans from "./User/test/Uploadans";
-import Evaluation from "./User/Result/Evaluation";
 import SpeechToText from "./Components/SpeechToText";
 import TestSelection from "./Test/TestSelection";
 import QuestionPaper from "./Test/OnlineTest";
 import ProfileSettingForm from "./User/Profile/ProfileSettingForm";
+import EvaluationResults from "./User/Result/Evaluation";
 
 function App() {
     return (
@@ -37,7 +37,7 @@ function App() {
                     <Route path="/tempquestionupload" element={<Tempquestionupload />} />
                     <Route path="/User/Test/instructions" element={<InstructionPage />} />
                     <Route path="/User/Test/uploadans" element={<Uploadans />} />
-                    <Route path="/User/Evaluation" element={<Evaluation />} />
+                    <Route path="/User/Evaluation" element={<EvaluationResults />} />
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
