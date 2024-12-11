@@ -17,6 +17,7 @@ import Evaluation from "./User/Result/Evaluation";
 import SpeechToText from "./Components/SpeechToText";
 import TestSelection from "./Test/TestSelection";
 import QuestionPaper from "./Test/OnlineTest";
+import ProfileSettingForm from "./User/Profile/ProfileSettingForm";
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
+                    <Route path="/Profilesetup" element={<ProfileSettingForm />} />
                 </Routes>
             </Router>
         </RecoilRoot>
