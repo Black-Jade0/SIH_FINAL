@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AssessmentCreation from "../Assessmentcreation/AssessmentCreation";
 import PerformanceReports from "../performanceReports/PerformanceReports";
 import AccessibilityOptions from "../accessibility/AccessibilityOptions";
-import Dashboard from "../Dashboardd/Dashboard";
+import Dashboard from "../Dashboard/Dashboard";
 import Support from "../support/Support";
 import ResultsAndAnalytics from "../Result/ResultsAndAnalytics";
 import Test from "../test/test";
@@ -44,31 +44,23 @@ const LandingPage = () => {
 
             {/* Main Content */}
             <div className="flex flex-col w-[85%] right-0  min-h-screen">
-                <div id="dashboard" className="section">
+                <div id="dashboard" className="section w-full">
                     <Dashboard />
                 </div>
-                
-                <div id="test" className="section">
+
+                <div id="test" className="section w-full">
                     <Test />
                 </div>
 
-                <div id="assessments" className="section">
-                    <AssessmentCreation />
-                </div>
-
-                <div id="accessibility" className="section">
-                    <AccessibilityOptions />
-                </div>
-
-                <div id="reports" className="section">
+                <div id="reports" className="section w-full">
                     <PerformanceReports />
                 </div>
 
-                <div id="resultandanalytics" className="section">
+                <div id="resultandanalytics" className="section w-full">
                     <ResultsAndAnalytics />
                 </div>
 
-                <div id="support" className="section">
+                <div id="support" className="section w-full">
                     <Support />
                 </div>
             </div>

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { BASE_URL } from '../../config';
-import PdfList from '../Educator/PdfList';
+import axios from "axios";
+import React, { useState } from "react";
+import { BASE_URL } from "../../config";
+import PdfList from "../Educator/PdfList";
 
 const Tempquestionupload = () => {
     const [file, setFile] = useState(null);
@@ -23,40 +23,50 @@ const Tempquestionupload = () => {
         e.preventDefault();
 
         if (!file) {
-            alert('Please select a file');
+            alert("Please select a file");
             return;
         }
 
         const formData = new FormData();
-        formData.append('pdf', file);
+        formData.append("pdf", file);
         // formData.append('infoFile', JSON.stringify(infoFile)); // Add the state variable
 
         try {
-            const response = await axios.post(BASE_URL+'/user/uploadtempquestion',formData,{
-                withCredentials: true,
-            })
-            
+            const response = await axios.post(
+                BASE_URL + "/user/uploadtempquestion",
+                formData,
+                {
+                    withCredentials: true,
+                }
+            );
+
             console.log(response.data);
         } catch (error) {
-            console.error('Error uploading file:', error);
+            console.error("Error uploading file:", error);
         }
     };
 
     return (
         <>
-         <form onSubmit={handleSubmit}>
-            <div style={{margin:"4"}}>
-            <h2>Upload questions: </h2>
-            <input type="file" accept="application/pdf" onChange={handleFileChange} style={{margin:"1"}} />
-            {/* <input type="text" placeholder='subject' onChange={(e)=>{handleInfoChange(e,"subject")}} style={{margin:"1"}} />
+            <form onSubmit={handleSubmit}>
+                <div style={{ margin: "4" }}>
+                    <h2>Upload questions: </h2>
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handleFileChange}
+                        style={{ margin: "1" }}
+                    />
+                    {/* <input type="text" placeholder='subject' onChange={(e)=>{handleInfoChange(e,"subject")}} style={{margin:"1"}} />
             <input type="text" placeholder='level' onChange={(e)=>{handleInfoChange(e,"level")}} style={{margin:"1"}}/> */}
-            <button type="submit" style={{margin:"2"}}>Upload</button>
-            </div>
-        </form>
-        <br />
-        <PdfList/>
+                    <button type="submit" style={{ margin: "2" }}>
+                        Upload
+                    </button>
+                </div>
+            </form>
+            <br />
+            <PdfList />
         </>
-        
     );
 };
 

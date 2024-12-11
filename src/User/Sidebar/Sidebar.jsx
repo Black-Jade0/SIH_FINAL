@@ -1,15 +1,8 @@
-import React from "react";
-import {
-    FaHome,
-    FaChartBar,
-    FaFileAlt,
-    FaAccessibleIcon,
-    FaQuestionCircle,
-    FaCog,
-} from "react-icons/fa";
+import React, { useEffect } from "react";
+import { FaChartBar, FaQuestionCircle, FaCog } from "react-icons/fa";
 import ProfileSection from "./ProfileSection";
 
-const Sidebar = ({ activeSection }) => {
+const Sidebar = ({ activeSection, setActiveSection }) => {
     const scrollToSection = (id) => {
         const section = document.getElementById(id);
         if (section) {
@@ -19,9 +12,35 @@ const Sidebar = ({ activeSection }) => {
 
     const getActiveClass = (id) => {
         return activeSection === id
-            ? "bg-[var(--main-color)] rounded-md text-white"
-            : "text-gray-400";
+            ? "bg-[var(--main-color)] text-white transition-colors duration-500 rounded-md"
+            : "text-gray-400 transition-colors duration-500";
     };
+
+    // Update activeSection on scroll
+    useEffect(() => {
+        const handleScroll = () => {
+            const sections = [
+                "dashboard",
+                "test",
+                "reports",
+                "resultandanalytics",
+                "support",
+            ];
+
+            sections.forEach((sectionId) => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                        setActiveSection(sectionId);
+                    }
+                }
+            });
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [setActiveSection]);
 
     return (
         <div className="h-screen w-[15%] sticky top-0 left-0 shadow-lg pr-2 pl-2">
@@ -29,7 +48,7 @@ const Sidebar = ({ activeSection }) => {
                 <ProfileSection />
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
                         "dashboard"
                     )}`}
                     onClick={() => scrollToSection("dashboard")}
@@ -39,7 +58,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  hover:text-gray-200 ${getActiveClass(
                         "test"
                     )}`}
                     onClick={() => scrollToSection("test")}
@@ -49,27 +68,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
-                        "assessments"
-                    )}`}
-                    onClick={() => scrollToSection("assessments")}
-                >
-                    <FaFileAlt className="inline mb-1 mr-4" />
-                    Assessment Creation
-                </button>
-
-                <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
-                        "accessibility"
-                    )}`}
-                    onClick={() => scrollToSection("accessibility")}
-                >
-                    <FaAccessibleIcon className="inline mb-1 mr-4" />
-                    Accessibility
-                </button>
-
-                <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "reports"
                     )}`}
                     onClick={() => scrollToSection("reports")}
@@ -79,7 +78,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "resultandanalytics"
                     )}`}
                     onClick={() => scrollToSection("resultandanalytics")}
@@ -89,7 +88,7 @@ const Sidebar = ({ activeSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--main-color)] rounded-md hover:text-gray-200 ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md hover:text-gray-200 ${getActiveClass(
                         "support"
                     )}`}
                     onClick={() => scrollToSection("support")}

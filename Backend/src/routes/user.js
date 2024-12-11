@@ -392,4 +392,22 @@ router.post("/profilesetup", authMiddleware, async (req, res) => {
     }
 });
 
+router.get("/pdfs", async (req, res) => {
+    try {
+        const pdfs = await prisma.questionPdf.findMany({
+            select: {
+                id: true,
+                name: true,
+                createdAt: true,
+                subject: true,
+                level: true,
+            },
+        });
+
+        res.status(200).json(pdfs);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching PDFs" });
+    }
+});
 module.exports = router;
