@@ -324,6 +324,7 @@ router.get('/getparseddata',async (req,res)=>{
 })
 router.get('/getparseddata2',async (req,res)=>{
     const body = req.body;
+    console.log("Parse data 2: ",body.subject);
     try{
         const parseddata = await prisma.questionParsed.findFirst({
             where:{
@@ -346,7 +347,7 @@ router.post("/submitanswer",authMiddleware, async (req,res) => {
         const answerbyuser = await prisma.answer.create({
             data:{
                 answers:body.answers,
-                userId,
+                userId:userId,
                 subject:body.subject,
                 level:body.level
             }
@@ -356,68 +357,108 @@ router.post("/submitanswer",authMiddleware, async (req,res) => {
             throw error("Unable to create record");
         }
         let result = null;
-        //need to send answers and questions to google for evaluation
-        //questions are needed to be fetched from parsedquestion table of db
         const questionforrequiredanswer = await prisma.questionParsed.findFirst({
             where:{
                 subject:body.subject,
                 level:body.level
             }
         });
+        console.log("raw data: ",questionforrequiredanswer);
 
-        try{
-            if (!answerbyuser || !questionforrequiredanswer) {
-                throw new Error("Both questions and answers data are required");
+        try {
+            // Log the incoming data
+            console.log("Questions data:", JSON.stringify(questionforrequiredanswer?.data?.questions, null, 2));
+            console.log("Answers data:", JSON.stringify(body?.answers, null, 2));
+        
+            // Validate questions data
+            if (!questionforrequiredanswer?.data?.questions) {
+                throw new Error("Questions data is missing or undefined");
             }
-            let totalMarks = 0;
-            totalMarks = questionforrequiredanswer.data.metadata.totalMarks;
-            const evaluationPrompt = `
-You are an expert evaluator. Evaluate the following answers based on the provided questions.
-Please provide:
-1. Total marks obtained out of ${totalPossibleMarks} 
-2. A brief summary of overall performance (2-3 sentences maximum)
-
-Questions:
-${JSON.stringify(questionsData, null, 2)}
-
-Student Answers:
-${JSON.stringify(answersData, null, 2)}
-
- Respond with a JSON object in this exact format:
-{
-    "obtainedMarks": 75,
-    "totalMarks": 100,
-    "summary": "Overall good performance with strong understanding of core concepts. Some minor improvements needed in detail and explanation."
-}
-`;
-//add rate limiting !
-const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
-          const model = genAI.getGenerativeModel({
-              model: "gemini-1.5-flash",
-              generationConfig: {
-                  maxOutputTokens: 4096,
-                  temperature: 0.4,
-              },
-          });
-          const result = await model.generateContent(evaluationPrompt);
-          const responseText = result.response.text();
-          try {
-            const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error("No JSON object found in response");
+        
+            if (!Array.isArray(questionforrequiredanswer.data.questions)) {
+                throw new Error("Questions data is not in array format");
             }
-            res.json({message:"Answer uploaded",evaluatedresponse:JSON.parse(jsonMatch[0])});
-        } catch (parseError) {
-            console.error("Raw response:", responseText);
-            console.error("Error parsing response:", parseError);
-            throw new Error("Failed to parse Gemini response");
-        }
-
-        } catch(error){
-            console.log("got the following error: ",error);
-
-        }
-
+        
+            if (questionforrequiredanswer.data.questions.length === 0) {
+                throw new Error("Questions array is empty");
+            }
+        
+            // Validate answers data
+            if (!body?.answers) {
+                throw new Error("Answers data is missing or undefined");
+            }
+        
+            if (Object.keys(body.answers).length === 0) {
+                throw new Error("No answers provided");
+            }
+        
+            // If validation passes, create the prompt
+            const evaluationPrompt = {
+                contents: [{
+                    role: "user",
+                    parts: [{
+                        text: `You are an expert evaluator. Evaluate the following answers based on the provided questions.
+        
+        Questions and their details:
+        ${questionforrequiredanswer.data.questions.map(q => 
+            `Question ${q.id}: ${q.text}
+             Type: ${q.type}
+             Marks: ${q.marks}
+             Difficulty: ${q.difficulty}
+             ${q.options ? `Options: ${q.options.map(opt => `${opt.id}) ${opt.text}`).join(', ')}` : ''}`
+        ).join('\n\n')}
+        
+        Student's Answers:
+        ${Object.entries(body.answers).map(([qId, ans]) => 
+            `Answer to ${qId}: ${ans}`
+        ).join('\n\n')}
+        
+        Please provide an evaluation in the following JSON format:
+        {
+            "obtainedMarks": <number>,
+            "totalMarks": ${questionforrequiredanswer.data.metadata.totalMarks},
+            "summary": "<2-3 sentence evaluation summary>"
+        }`
+                    }]
+                }]
+            };
+        
+            // Log the constructed prompt
+            console.log("Constructed prompt:", JSON.stringify(evaluationPrompt, null, 2));
+        
+            const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+            const model = genAI.getGenerativeModel({
+                model: "gemini-1.5-flash",
+                generationConfig: {
+                    maxOutputTokens: 4096,
+                    temperature: 0.4,
+                },
+            });
+        
+            const result = await model.generateContent(evaluationPrompt);
+            const responseText = result.response.text();
+        
+            try {
+                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) {
+                    throw new Error("No JSON object found in response");
+                }
+                console.log("EvaluatedResponse: ", JSON.parse(jsonMatch[0]));
+                res.json({message: "Answer uploaded", evaluatedresponse: JSON.parse(jsonMatch[0])});
+            } catch (parseError) {
+                console.error("Raw response:", responseText);
+                console.error("Error parsing response:", parseError);
+                throw new Error("Failed to parse Gemini response");
+            }
+        } catch (error) {
+            console.log("Error details:", error);
+            res.status(500).json({
+                message: "Error!",
+                error: error.toString(),
+                questionsDataPresent: !!questionforrequiredanswer?.data?.questions,
+                answersDataPresent: !!body?.answers
+            });
+        }        
     } catch(error){
         console.log("Got the following error: ",error);
         res.status(500).json({message:"Failed to submit answer"});

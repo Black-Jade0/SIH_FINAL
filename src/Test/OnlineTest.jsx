@@ -8,34 +8,31 @@ import Result from "./Result";
 import { useLocation } from "react-router-dom";
 
 const QuestionPaper = () => {
-    const location = useLocation();
-    const { data, subject, level } = location.state;
-    console.log("Rec. states ", data);
-    const [answers, setAnswers] = useState({});
-    const [result, setResult] = useState();
+  const location = useLocation();
+  const { data, subject, level } = location.state;
+  console.log("Rec. states ",data);
+    const [answers, setAnswers] = useState();
+    const [result , setResult] = useState();
     const handleAnswerChange = (questionId, answer) => {
         setAnswers((prev) => ({
             ...prev,
             [questionId]: answer,
         }));
     };
+    
+    const submitAnswer = async ()=>{
 
-    const submitAnswer = async () => {
-        try {
-            const response = await axios.post(
-                BASE_URL + "/user/submitanswer",
-                {
-                    answers: answers,
-                    subject: subject,
-                    level: level, //have to send subject and level also !
-                },
-                {
-                    withCredentials: true,
-                }
-            );
-            setResult(response.data.result);
-        } catch (error) {
-            console.log("Got the following error: ", error);
+        try{
+          const response = await axios.post(BASE_URL+'/user/submitanswer',{
+            answers:answers,
+            subject:subject,
+            level:level                //have to send subject and level also !
+          },{
+            withCredentials: true,
+          });
+          setResult(response.data.evaluatedresponse);
+        } catch (error){
+          console.log("Got the following error: ",error)
         }
     };
     if (result) {
