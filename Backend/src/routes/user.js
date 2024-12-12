@@ -165,6 +165,91 @@ router.post("/uploadtempquestion", uploadLimiter, upload.single("pdf"), async (r
         }
     }
 });
+router.post("/dynamicquestion", async(req,res)=>{
+    const {subject , level } = req.body;
+    try{
+
+        const genAI = new GoogleGenerativeAI(process.env.API_KEY_GEMINI);
+          const model = genAI.getGenerativeModel({
+              model: "gemini-1.5-flash",
+              generationConfig: {
+                  maxOutputTokens: 4096,
+                  temperature: 0.4,
+              },
+          });
+                const prompt = `You are an intelligent and creative question generator. Your task is to create a JSON array containing 20 well-thought-out and comprehensive questions. These questions should be based on a given subject and difficulty level. Ensure that the questions are diverse in format (e.g., multiple choice, short answer, long answer, and problem-solving). Follow this structure:
+            Subject: ${subject}.
+            Level: ${level}.
+            Topics: Include a range of topics from the subject.
+            Formats: short answer, problem-solving.
+            Respond with a JSON object in this exact format:
+            {
+            "question_id": 1,
+            "question_text": "What is the formula for calculating the area of a circle?",
+            "difficulty_level": "Intermediate",
+            }
+            In the JSON array:
+            Arrange the questions from easiest to hardest.
+            Include topics that provide a well-rounded coverage of the subject`
+          const result = await model.generateContent(prompt);
+          const responseText = result.response.text();
+          const finalanswer = parseJSON(responseText);
+          res.json({result:finalanswer});
+    } catch(error){
+        console.log("Got the error while generating questions: ",error);
+        res.status(500).json({message:"Got the error in dynamicquestion route "})
+    }
+})
+function parseJSON(responseText) {
+    // Cleaning and parsing attempts
+    const cleanAndParse = (text) => {
+        // Trim and handle common formatting issues
+        text = text.trim()
+            .replace(/^[^[{]+/, '')   // Remove leading non-JSON characters
+            .replace(/[^}\]]+$/, '');  // Remove trailing non-JSON characters
+
+        // Multiple parsing strategies
+        const parsingAttempts = [
+            () => JSON.parse(text),
+            () => JSON.parse(text.replace(/'/g, '"')),
+            () => JSON.parse(text.replace(/\\'/g, "'").replace(/\\"/g, '"'))
+        ];
+
+        for (const attempt of parsingAttempts) {
+            try {
+                const parsed = attempt();
+                
+                // Validate parsed data is an array or object
+                if (parsed && (Array.isArray(parsed) || typeof parsed === 'object')) {
+                    return parsed;
+                }
+            } catch (error) {
+                console.warn('Parsing attempt failed:', error);
+            }
+        }
+
+        throw new Error('Unable to parse JSON');
+    };
+
+    try {
+        // Attempt to parse the response
+        const parsedData = cleanAndParse(responseText);
+        
+        // Ensure non-empty result
+        if (!parsedData || (Array.isArray(parsedData) && parsedData.length === 0)) {
+            throw new Error('Parsed data is empty');
+        }
+
+        return parsedData;
+    } catch (error) {
+        console.error('JSON Parsing Error:', {
+            originalResponse: responseText,
+            errorMessage: error.message
+        });
+
+        throw new Error(`Failed to parse response: ${error.message}`);
+    }
+}
 
 router.post("/uploadforevalv1", upload.single("pdf"), async (req, res) => {
     const tempFiles = [];

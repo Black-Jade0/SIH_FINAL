@@ -26,6 +26,7 @@ import PWDtest from "./User/PWD/Test/TestSelection";
 import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
 import CareerAdvisorSelector from "./User/test/CareerAdvisorSelection";
 import GoogleTranslate from "../Backend/src/GoogleTranslate";
+import DifficultySelector from "./DynamicTests/DynamicTestGeneration";
 
 function App() {
     return (
@@ -57,6 +58,7 @@ function App() {
                     <Route path="/User/PWD" element={<PWDhome />} />
                     <Route path="/User/PWD/Test" element={<PWDtest />} />
                     <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />
+                    <Route path="/dynamicquestions" element={<DifficultySelector />} />
                 </Routes>
             </Router>
         </RecoilRoot>
