@@ -70,7 +70,11 @@ const Test = () => {
         }
     };
 
+    const handleAdaptiveTest = () =>{
+        navigate('adaptivelevel');
+    }
     return (
+        <>
         <section className="w-full box-border p-6 lg:p-10">
             {error ? (
                 <p className="text-red-500">{error}</p>
@@ -131,10 +135,21 @@ const Test = () => {
                             </li>
                         ))}
                     </ul>
-                    <TestSelection/>
+                    
                 </>
             )}
         </section>
+        <TestSelection/>
+
+        <div onclick={handleAdaptiveTest}>
+            {/*Not working put a different thumbnail for redirecting to adaptive test page ! */}
+        <img src="/adaptiveimage.png" className="w-30 h-30 cursor-pointer" onclick={handleAdaptiveTest} />
+        {/*Two type of career recommendation: 1 in which user can give specific field of interest etc
+        2. these fields are fetched from database */}
+        </div>
+        
+        </>
+        
     );
 };
 

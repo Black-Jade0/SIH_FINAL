@@ -35,6 +35,7 @@ fs.mkdir(questionDir,{recursive:true}).catch(console.error);
 const rateLimit = require('express-rate-limit');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { error } = require("console");
+const { default: axios } = require("axios");
 
 // Create a limiter
 const uploadLimiter = rateLimit({
@@ -94,46 +95,46 @@ router.post("/uploadtempquestion", uploadLimiter, upload.single("pdf"), async (r
                 },
                 { text: `Please convert the questions in this file into a structured JSON format. Each question should be represented as a detailed object with the following attributes:
 
-Base attributes (required for all questions):
+        Base attributes (required for all questions):
 
-Unique ID and serial number (e.g., Q1, Q2)
-Question type (multiple choice, fill in blank, true/false, passage-based, etc.)
-Question text
-Marks/points allocated
-Difficulty level (easy/medium/hard)
+        Unique ID and serial number (e.g., Q1, Q2)
+        Question type (multiple choice, fill in blank, true/false, passage-based, etc.)
+        Question text
+        Marks/points allocated
+        Difficulty level (easy/medium/hard)
 
-Type-specific attributes:
+        Type-specific attributes:
 
-For passage-based questions:
+        For passage-based questions:
 
-Include the full passage text
-Passage title (if available)
-Source attribution (if available)
+        Include the full passage text
+        Passage title (if available)
+        Source attribution (if available)
 
-For multiple choice questions:
+        For multiple choice questions:
 
-Array of options with ID and text
-Correct answer reference
+        Array of options with ID and text
+        Correct answer reference
 
-For other question types:
+        For other question types:
 
-Relevant specific attributes
+        Relevant specific attributes
 
-Optional attributes:
+        Optional attributes:
 
-Topic tags
-Specific instructions
-Time recommended (if applicable)
+        Topic tags
+        Specific instructions
+        Time recommended (if applicable)
 
-Include metadata about the entire question set:
+        Include metadata about the entire question set:
 
-Total number of questions
-Total marks
-Overall time limit
-General instructions
-Subject/topic information
+        Total number of questions
+        Total marks
+        Overall time limit
+        General instructions
+        Subject/topic information
 
-Please preserve any formatting, mathematical equations, or special characters in the question text. The output should be valid JSON that can be parsed programmatically.` }, // Your existing prompt
+        Please preserve any formatting, mathematical equations, or special characters in the question text. The output should be valid JSON that can be parsed programmatically.` }, // Your existing prompt
             ]);
         });
 
@@ -257,6 +258,128 @@ setInterval(async () => {
         console.error("Scheduled cleanup failed:", error);
     }
 }, 60 * 60 * 1000); // Run every hour
+// Cache categories to reduce API calls
+let categoriesCache = null;
+let categoriesCacheTime = null;
+const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+
+// Get available categories
+router.get('/api/categories', async (req, res) => {
+    try {
+        // Return cached categories if available and fresh
+        const now = Date.now();
+        if (categoriesCache && categoriesCacheTime && (now - categoriesCacheTime < CACHE_DURATION)) {
+            return res.json(categoriesCache);
+        }
+
+        const response = await axios.get('https://opentdb.com/api_category.php');
+        
+        // Update cache
+        categoriesCache = response.data.trivia_categories;
+        categoriesCacheTime = now;
+        
+        res.json(response.data.trivia_categories);
+    } catch (error) {
+        console.error('Categories fetch error:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch categories',
+            details: error.message 
+        });
+    }
+});
+// Get questions with retries
+router.get('/api/questions', async (req, res) => {
+    const { amount = 1, difficulty = 'medium', category = '' } = req.query;
+    const MAX_RETRIES = 3;
+    
+    const fetchQuestions = async (retryCount = 0) => {
+        try {
+            const params = new URLSearchParams({
+                amount,
+                difficulty,
+                type: 'multiple'
+            });
+
+            if (category) {
+                params.append('category', category);
+            }
+
+            const url = `https://opentdb.com/api.php?${params.toString()}`;
+            const response = await axios.get(url);
+            
+            if (response.data.response_code === 0) {
+                return response.data.results;
+            } else if (retryCount < MAX_RETRIES) {
+                // If no questions found, retry with different parameters
+                console.log(`Retry attempt ${retryCount + 1}`);
+                return fetchQuestions(retryCount + 1);
+            } else {
+                throw new Error('Unable to fetch questions after multiple attempts');
+            }
+        } catch (error) {
+            if (retryCount < MAX_RETRIES) {
+                return fetchQuestions(retryCount + 1);
+            }
+            throw error;
+        }
+    };
+
+    try {
+        const questions = await fetchQuestions();
+        res.json(questions);
+    } catch (error) {
+        console.error('Questions fetch error:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch questions',
+            details: error.message 
+        });
+    }
+});
+
+// Validate answer (new endpoint)
+router.post('/api/validate-answer', (req, res) => {
+    const { userAnswer, correctAnswer } = req.body;
+    
+    if (!userAnswer || !correctAnswer) {
+        return res.status(400).json({ 
+            error: 'Missing required fields' 
+        });
+    }
+
+    const isCorrect = userAnswer === correctAnswer;
+    res.json({ 
+        correct: isCorrect,
+        correctAnswer 
+    });
+});
+
+
+// Get questions based on parameters
+router.post('/api/questions', async (req, res) => {
+    const { amount = 1, difficulty = 'medium', category = null } = req.body;
+    
+    try {
+        const params = {
+            amount,
+            difficulty,
+            type: 'multiple'
+        };
+        
+        if (category) {
+            params.category = category;
+        }
+        
+        const response = await axios.get('https://opentdb.com/api.php', { params });
+        
+        if (response.data.response_code === 0) {
+            res.json(response.data.results);
+        } else {
+            res.status(400).json({ error: 'Failed to fetch questions' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
 router.post("/signup", async (req, res) => {
     console.log("Reaching here");
@@ -464,50 +587,72 @@ router.post("/submitanswer",authMiddleware, async (req,res) => {
         res.status(500).json({message:"Failed to submit answer"});
     }
 })
-router.post("/profilesetup", authMiddleware, async (req, res) => {
-    const body = req.body;
+router.post("/profilesetup", authMiddleware, upload.single("pdf"), async (req, res) => {
+    const body = JSON.parse(req.body.formData);
     const userId = req.userId;
-    //console.log("userId rec. ",userId)
     try {
-        const userdetail = await prisma.userDetail.upsert({
-            where: { userId },
-            update: {
-                userId: userId,
-                lat: body.lat,
-                long: body.long,
-                fieldofinterest: body.fieldofinterest,
-                gender: body.gender,
-                age: Number(body.age),
-                phone: Number(body.phone),
-                state: body.state,
-                currentstd: body.currentstd,
-                socialmedia: {
-                    instagram: body.instagram,
-                    twitter: body.twitter,
-                    linkedin: body.linkedin,
+        console.log("Form data: ",body)
+        let userdetail = null;
+        if (req.file) {
+            const { originalname, buffer, mimetype } = req.file;
+            //do authorization with the database if auth failed then return
+             userdetail = await prisma.userDetail.upsert({
+                where: { userId },
+                update: {
+                    userId: userId,
+                    fieldofinterest: body.fieldofinterest,
+                    gender: body.gender,
+                    age: Number(body.age),
+                    phone: Number(body.phone),
+                    currentstd: body.currentStd,
+                    Stemresponse:body.stemresponse,
+                    pwdtype:body.pwdtype,
+                    nameoffile:originalname,
+                    documentdata:buffer,
+                    contentType:mimetype
                 },
-            },
-            create: {
-                userId: userId,
-                lat: body.lat,
-                long: body.long,
-                fieldofinterest: body.fieldofinterest,
-                gender: body.gender,
-                age: Number(body.age),
-                phone: Number(body.phone),
-                state: body.state,
-                currentstd: body.currentstd,
-                socialmedia: {
-                    instagram: body.instagram,
-                    twitter: body.twitter,
-                    linkedin: body.linkedin,
+                create: {
+                    userId: userId,
+                    fieldofinterest: body.fieldofinterest,
+                    gender: body.gender,
+                    age: Number(body.age),
+                    phone: Number(body.phone),
+                    currentstd: body.currentStd,
+                    Stemresponse:body.stemresponse,
+                    pwdtype:body.pwdtype,
+                    nameoffile:originalname,
+                    documentdata:buffer,
+                    contentType:mimetype
                 },
-            },
-        });
+            });
+        } else {
+             userdetail = await prisma.userDetail.upsert({
+                where: { userId },
+                update: {
+                    userId: userId,
+                    fieldofinterest: body.fieldofinterest,
+                    gender: body.gender,
+                    age: Number(body.age),
+                    phone: Number(body.phone),
+                    currentstd: body.currentStd,
+                    Stemresponse:body.stemresponse,
+                },
+                create: {
+                    userId: userId,
+                    fieldofinterest: body.fieldofinterest,
+                    gender: body.gender,
+                    age: Number(body.age),
+                    phone: Number(body.phone),
+                    currentstd: body.currentStd,
+                    Stemresponse:body.stemresponse,
+                },
+            });
+        }
+        
         res.status(200).json({ message: "Profile created successfully" });
     } catch (error) {
         console.log("Got the error: ", error);
-        res.status(411).json({ error: "Failed to setup the profile" });
+        res.status(500).json({ error: "Failed to setup the profile" });
     }
 });
 

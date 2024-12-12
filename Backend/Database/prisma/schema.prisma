@@ -32,7 +32,17 @@ model UserDetail {
   fieldofinterest       String
   Stemresponse          Json?
   Interestbasedresponse Json?
+  pwdtype               String?
+  nameoffile            String? // Original file name
+  documentdata          Bytes? // Blob for storing file content
+  contentType           String? // MIME type of the file (e.g., application/pdf)
   userschema            UserSchema @relation(fields: [userId], references: [id])
+}
+
+model PwdDocument {
+  id                    String     @id @default(auto()) @map("_id") @db.ObjectId
+  name                  String
+  udid                  String
 }
 
 model EduSchema {

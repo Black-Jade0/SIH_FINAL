@@ -18,6 +18,9 @@ import TestSelection from "./Test/TestSelection";
 import QuestionPaper from "./Test/OnlineTest";
 import ProfileSettingForm from "./User/Profile/ProfileSettingForm";
 import EvaluationResults from "./User/Result/Evaluation";
+import TriviaGame from "./AiModels/AdaptiveLevel";
+import PDFUploadForm from "./User/Profile/ProfileSettingForm";
+import CareerAdvisor from "./User/CareerRecommendation";
 
 function App() {
     return (
@@ -41,7 +44,9 @@ function App() {
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
-                    <Route path="/Profilesetup" element={<ProfileSettingForm />} />
+                    <Route path="/Profilesetup" element={<PDFUploadForm />} />
+                    <Route path="/adaptivelevel" element={<TriviaGame />} />
+                    <Route path="/careeradvisor" element={<CareerAdvisor />} />
                 </Routes>
             </Router>
         </RecoilRoot>
