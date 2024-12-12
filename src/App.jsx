@@ -21,6 +21,9 @@ import EvaluationResults from "./User/Result/Evaluation";
 import TriviaGame from "./AiModels/AdaptiveLevel";
 import PDFUploadForm from "./User/Profile/ProfileSettingForm";
 import CareerAdvisor from "./User/CareerRecommendation";
+import PWDhome from "./User/PWD/home";
+import PWDtest from "./User/PWD/Test/TestSelection";
+import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
 
 function App() {
     return (
@@ -44,9 +47,7 @@ function App() {
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
-                    <Route path="/Profilesetup" element={<PDFUploadForm />} />
-                    <Route path="/adaptivelevel" element={<TriviaGame />} />
-                    <Route path="/careeradvisor" element={<CareerAdvisor />} />
+                    <Route path="/Profilesetup" element={<ProfileSettingForm />} />
                 </Routes>
             </Router>
         </RecoilRoot>
