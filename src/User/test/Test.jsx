@@ -144,8 +144,7 @@ const Test = () => {
         <div onclick={handleAdaptiveTest}>
             {/*Not working put a different thumbnail for redirecting to adaptive test page ! */}
         <img src="/adaptiveimage.png" className="w-30 h-30 cursor-pointer" onclick={handleAdaptiveTest} />
-        {/*Two type of career recommendation: 1 in which user can give specific field of interest etc
-        2. these fields are fetched from database */}
+
         </div>
         
         </>
