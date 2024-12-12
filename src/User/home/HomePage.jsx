@@ -1,5 +1,5 @@
 import React from "react";
-import { FaRegChartBar, FaAccessibleIcon, FaBrain } from "react-icons/fa";
+import { FaRegChartBar, FaBrain } from "react-icons/fa";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { GiTeacher } from "react-icons/gi";
 
@@ -18,9 +18,9 @@ const HomePage = () => {
                         with Disabilities (PWD), and vocational learners.
                         Experience the future of skill evaluation.
                     </p>
-                    <button className="bg-white text-blue-600 px-8 py-3 rounded-full shadow-lg hover:bg-blue-200 transition duration-300">
+                    {/* <button className="bg-white text-blue-600 px-8 py-3 rounded-full shadow-lg hover:bg-blue-200 transition duration-300">
                         Get Started
-                    </button>
+                    </button> */}
                 </div>
 
                 {/* Right Side: Diagrams & Features */}
@@ -91,3 +91,6 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+

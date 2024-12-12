@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { FaChartBar, FaQuestionCircle, FaCog } from "react-icons/fa";
 import ProfileSection from "./ProfileSection";
+import GoogleTranslate from "../../../Backend/src/GoogleTranslate";
 
 const Sidebar = ({ activeSection, setActiveSection }) => {
     const scrollToSection = (id) => {
@@ -58,7 +59,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
                 </button>
 
                 <button
-                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  ${getActiveClass(
+                    className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
                         "test"
                     )}`}
                     onClick={() => scrollToSection("test")}
