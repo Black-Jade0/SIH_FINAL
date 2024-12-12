@@ -142,45 +142,26 @@ const Test = () => {
             </section>
             <TestSelection />
 
-            <div>
-                {/*Not working put a different thumbnail for redirecting to adaptive test page ! */}
-                {/* <img
-                    src="/adaptiveimage.png"
-                    className="cursor-pointer w-30 h-30"
-                    onclick={handleAdaptiveTest}
-                /> */}
-                <div
-                    style={{
-                        marginTop: "40px",
-                        padding: "20px",
-                        borderRadius: "5px",
-                        textAlign: "center",
-                    }}
-                >
-                    <h2 style={{ margin: "0 0 10px" }}>Adaptive Test</h2>
-                    <p style={{ margin: "0 0 20px" }}>
-                        Experience a personalized test designed to adapt to your
-                        skill level.
-                    </p>
+            <section className="w-full box-border p-6 lg:p-10">
+                <h2 className="text-3xl text-left font-extrabold mt-4">
+                    Adaptive Test
+                </h2>
+                <p className="text-lg text-center m-4">
+                    Experience a personalized test designed to adapt to your
+                    skill level.
+                </p>
+                <div>
                     <button
-                        onClick = {handleAdaptiveTest}
-                        style={{
-                            padding: "10px 20px",
-                            backgroundColor: "var(--main-color)",
-                            color: "#fff",
-                            textDecoration: "none",
-                            borderRadius: "5px",
-                            fontSize: "16px",
-                        }}
+                        onClick={handleAdaptiveTest}
+                        className="bg-[var(--main-color)] text-white rounded-lg shadow hover:shadow-lg hover:opacity-90 transition"
                     >
                         Start Adaptive Test
                     </button>
                 </div>
-                {/*Two type of career recommendation: 1 in which user can give specific field of interest etc
-        2. these fields are fetched from database */}
-            </div>
+            </section>
         </>
     );
+
 };
 
 export default Test;

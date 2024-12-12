@@ -50,7 +50,7 @@ function App() {
                     <Route path="/Profilesetup" element={<ProfileSettingForm />} />
                     <Route path="/User/PWD" element={<PWDhome />} />
                     <Route path="/User/PWD/Test" element={<PWDtest />} />
-                    <Route path="/User/PWD/Test/questionpaper" element={<ProfileSettingForm />} />
+                    <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />
                 </Routes>
             </Router>
         </RecoilRoot>
