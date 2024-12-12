@@ -36,6 +36,7 @@ model UserDetail {
   nameoffile            String? // Original file name
   documentdata          Bytes? // Blob for storing file content
   contentType           String? // MIME type of the file (e.g., application/pdf)
+  analysis              Json? 
   userschema            UserSchema @relation(fields: [userId], references: [id])
 }
 

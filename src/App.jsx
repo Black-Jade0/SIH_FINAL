@@ -24,11 +24,16 @@ import CareerAdvisor from "./User/CareerRecommendation";
 import PWDhome from "./User/PWD/home";
 import PWDtest from "./User/PWD/Test/TestSelection";
 import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
+import CareerAdvisorSelector from "./User/test/CareerAdvisorSelection";
+import GoogleTranslate from "../Backend/src/GoogleTranslate";
 
 function App() {
     return (
         <RecoilRoot>
             <Router>
+            <div className="translate-wrapper">
+                        <GoogleTranslate />
+                    </div>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/welcome" element={<Home />} />
@@ -48,6 +53,7 @@ function App() {
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
                     <Route path="/Profilesetup" element={<ProfileSettingForm />} />
+                    <Route path="/careerrecommend" element={<CareerAdvisorSelector />} />
                     <Route path="/User/PWD" element={<PWDhome />} />
                     <Route path="/User/PWD/Test" element={<PWDtest />} />
                     <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />

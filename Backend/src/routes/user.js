@@ -462,6 +462,29 @@ router.get('/getparseddata2',async (req,res)=>{
         res.status(411).json({message:"Failed to get parsed data"});
     }
 })
+router.get('/fetchaccountdetails',authMiddleware,async (req,res) => {
+    const userId = req.userId;
+    try{
+        const user = await prisma.userDetail.findFirst({
+            where:{
+                userId:userId,
+            },include:{
+                stemresponse:true, //education
+                fieldofinterest:true, 
+                analysis:true
+            }
+        });
+        if (!user) {
+            console.log("User not found");
+            return res.status(404).json({ error: "User not found" });
+        }
+        console.log("User found ",user);
+        res.json({RecUser:user});
+    } catch(error){
+        console.log("Got the following error: ",error);
+        res.status(500).json({message:"failed fetching details "})
+    }
+})
 router.post("/submitanswer",authMiddleware, async (req,res) => {
     const body = req.body;
     const userId = req.userId;
