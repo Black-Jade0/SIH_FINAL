@@ -1,9 +1,9 @@
 import axios from "axios";
-import { BASE_URL } from "../../config";
+import { BASE_URL } from "../../../../config";
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const TestSelection = () => {
+const PWDtest = () => {
     const [pdfs, setPdfs] = useState([]);
     const [error, setError] = useState("");
     const [images, setImages] = useState({}); // Store images for each subject
@@ -77,7 +77,7 @@ const TestSelection = () => {
         setLevel(level);
     };
     if (data) {
-        navigate("/question-paper", {
+        navigate("/User/PWD/Test/questionpaper", {
             state: {
                 data: data.data,
                 subject: subject,
@@ -95,9 +95,10 @@ const TestSelection = () => {
                         Online Tests
                     </h2>
                     <ul className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {pdfs.map((pdf) => (
+                        {pdfs.map((pdf,index) => (
                             <li
                                 key={pdf.id}
+                                data-test-index={index}
                                 onClick={() => {
                                     requestsender(
                                         pdf.id,
@@ -151,4 +152,4 @@ const TestSelection = () => {
         </section>
     );
 };
-export default TestSelection;
+export default PWDtest;

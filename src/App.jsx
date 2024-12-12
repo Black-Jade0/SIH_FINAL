@@ -19,6 +19,8 @@ import QuestionPaper from "./Test/OnlineTest";
 import ProfileSettingForm from "./User/Profile/ProfileSettingForm";
 import EvaluationResults from "./User/Result/Evaluation";
 import PWDhome from "./User/PWD/home";
+import PWDtest from "./User/PWD/Test/TestSelection";
+import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
 
 function App() {
     return (
@@ -44,6 +46,8 @@ function App() {
                     <Route path="/question-paper" element={<QuestionPaper />} />
                     <Route path="/Profilesetup" element={<ProfileSettingForm />} />
                     <Route path="/User/PWD" element={<PWDhome />} />
+                    <Route path="/User/PWD/Test" element={<PWDtest />} />
+                    <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />
                 </Routes>
             </Router>
         </RecoilRoot>

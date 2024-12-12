@@ -18,21 +18,21 @@ const PWDhome = () => {
                             title: "Online Tests",
                             description:
                                 "Take online tests designed to assess your skills and provide valuable feedback.",
-                            link: "/PWD/Test",
+                            link: "/User/PWD/Test",
                             buttonText: "Go to Tests",
                         },
                         {
                             title: "Results and Analytics",
                             description:
                                 "View your test results and detailed analytics to track your progress.",
-                            link: "/PWD/Result",
+                            link: "/User/PWD/Result",
                             buttonText: "View Results",
                         },
                         {
                             title: "Support",
                             description:
                                 "Get assistance and support whenever you need it.",
-                            link: "/PWD/Support",
+                            link: "/User/PWD/Support",
                             buttonText: "Get Support",
                         },
                     ].map((feature, index) => (
