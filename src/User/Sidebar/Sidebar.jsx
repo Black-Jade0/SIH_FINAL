@@ -47,15 +47,15 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
             <div className="mt-4 flex flex-col gap-1 h-full items-center">
                 <ProfileSection />
 
-                {/* <button
+                <button
                     className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md ${getActiveClass(
-                        "dashboard"
+                        "home"
                     )}`}
-                    onClick={() => scrollToSection("dashboard")}
+                    onClick={() => scrollToSection("home")}
                 >
                     <FaChartBar className="inline mb-1 mr-4" />
-                    Dashboard
-                </button> */}
+                    Home
+                </button>
 
                 <button
                     className={`w-full text-left p-8 flex items-center hover:bg-[var(--boom-color)] rounded-md  ${getActiveClass(

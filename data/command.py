@@ -250,18 +250,68 @@ def select_test_by_number(driver, test_number):
     except Exception as e:
         print(f"Error selecting test: {e}")
         
-def scroll_to_question(driver, question_number):
+def scroll_to_question(driver, question_identifier, verbose=True):
     try:
-        # Find question by its number/ID
-        question = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'mb-6') and .//span[text()='{question_number}.']"))
-        )
-        
-        # Scroll to the question
-        driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", question)
-        print(f"Scrolled to question {question_number}")
+        # Support multiple types of identifiers
+        if isinstance(question_identifier, int):
+            # If it's an integer, treat it as an index (0-based)
+            question = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, f"(//div[contains(@class, 'space-y-6')]//div[contains(@class, 'mb-6')])[{question_identifier + 1}]"))
+            )
+            identifier_type = "index"
+        elif isinstance(question_identifier, str):
+            # If it's a string, look for different matching strategies
+            try:
+                # Try exact match with question number
+                question = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'mb-6') and contains(., 'Question {question_identifier}')]"))
+                )
+                identifier_type = "question number"
+            except:
+                # Fallback to partial text match
+                question = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, f"//div[contains(@class, 'mb-6') and contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{question_identifier.lower()}')]"))
+                )
+                identifier_type = "text"
+        else:
+            raise ValueError("Invalid identifier type. Use int or str.")
+
+        # Scroll to the question with more robust scrolling
+        driver.execute_script("""
+            var element = arguments[0];
+            var offset = 100; // Offset to account for fixed headers
+            
+            // Smooth scroll with offset
+            window.scrollTo({
+                top: element.getBoundingClientRect().top + window.pageYOffset - offset,
+                behavior: 'smooth'
+            });
+            
+            // Optional: Highlight the question temporarily
+            element.style.transition = 'background-color 0.5s ease';
+            element.style.backgroundColor = 'rgba(0, 123, 255, 0.1)';
+            setTimeout(() => {
+                element.style.backgroundColor = '';
+            }, 1000);
+        """, question)
+
+        # Verbose logging
+        if verbose:
+            print(f"Scrolled to {'question' if identifier_type != 'text' else 'content'} "
+                  f"using {identifier_type}: '{question_identifier}'")
+            
+            # Try to extract and print question text
+            try:
+                question_text = question.text[:100] + '...' if len(question.text) > 100 else question.text
+                print(f"Question preview: {question_text}")
+            except:
+                pass
+
+        return question
+
     except Exception as e:
-        print(f"Error scrolling to question: {e}")
+        print(f"Error scrolling: {e}")
+        return None
 
 def fill_answer(driver, question_number, answer):
     try:

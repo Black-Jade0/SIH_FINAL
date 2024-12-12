@@ -54,6 +54,9 @@ function App() {
                     <Route path="/question-paper" element={<QuestionPaper />} />
                     <Route path="/Profilesetup" element={<ProfileSettingForm />} />
                     <Route path="/careerrecommend" element={<CareerAdvisorSelector />} />
+                    <Route path="/User/PWD" element={<PWDhome />} />
+                    <Route path="/User/PWD/Test" element={<PWDtest />} />
+                    <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />
                 </Routes>
             </Router>
         </RecoilRoot>

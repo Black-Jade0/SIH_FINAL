@@ -8,6 +8,7 @@ import Dashboard from "../Dashboard/Dashboard";
 import Support from "../support/Support";
 import ResultsAndAnalytics from "../Result/ResultsAndAnalytics";
 import Test from "../test/test";
+import HomePage from "../home/HomePage";
 
 const LandingPage = () => {
     const [activeSection, setActiveSection] = useState("home");
@@ -44,9 +45,9 @@ const LandingPage = () => {
 
             {/* Main Content */}
             <div className="flex flex-col w-[85%] right-0  min-h-screen">
-                {/* <div id="dashboard" className="section w-full">
-                    <Dashboard />
-                </div> */}
+                <div id="home" className="section w-full">
+                    <HomePage />
+                </div>
 
                 <div id="test" className="section w-full">
                     <Test />

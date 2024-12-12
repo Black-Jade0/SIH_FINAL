@@ -59,7 +59,7 @@ const PWDtest = () => {
     const [level, setLevel] = useState("");
     const [data, setData] = useState();
     const requestsender = async (id, subject, level) => {
-        console.log("got here: ", id);
+        console.log("got here: ", id, level, subject);
         const response = await axios.get(
             BASE_URL + "/user/getparseddata2",
             {
@@ -95,7 +95,7 @@ const PWDtest = () => {
                         Online Tests
                     </h2>
                     <ul className="pt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {pdfs.map((pdf,index) => (
+                        {pdfs.map((pdf, index) => (
                             <li
                                 key={pdf.id}
                                 data-test-index={index}
