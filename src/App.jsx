@@ -48,6 +48,9 @@ function App() {
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
                     <Route path="/Profilesetup" element={<ProfileSettingForm />} />
+                    <Route path="/User/PWD" element={<PWDhome />} />
+                    <Route path="/User/PWD/Test" element={<PWDtest />} />
+                    <Route path="/User/PWD/Test/questionpaper" element={<ProfileSettingForm />} />
                 </Routes>
             </Router>
         </RecoilRoot>

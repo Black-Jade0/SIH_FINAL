@@ -3,6 +3,7 @@ import { BASE_URL } from "../../../config";
 import { useNavigate } from "react-router-dom";
 import TestSelection from "../../Test/TestSelection";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Test = () => {
     const [pdfs, setPdfs] = useState([]);
@@ -70,86 +71,115 @@ const Test = () => {
         }
     };
 
-    const handleAdaptiveTest = () =>{
-        navigate('adaptivelevel');
-    }
+    const handleAdaptiveTest = () => {
+        navigate("/adaptivelevel");
+    };
     return (
         <>
-        <section className="w-full box-border p-6 lg:p-10">
-            {error ? (
-                <p className="text-red-500">{error}</p>
-            ) : (
-                <>
-                    <h2 className="text-3xl text-left font-extrabold mt-4">
-                        Your Tests
-                    </h2>
-                    <ul className="pt-8 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {pdfs.map((pdf) => (
-                            <li
-                                key={pdf.id}
-                                onClick={() => {
-                                    navigateInstruction(
-                                        pdf.id,
-                                        pdf.level,
-                                        pdf.subject
-                                    );
-                                }}
-                                className="hover:cursor-pointer flex flex-col gap-2 bg-[var(--main-color)] rounded-lg shadow-lg p-4 hover:shadow-2xl transition-shadow"
-                            >
-                                <div className="h-40 w-full rounded mb-4 overflow-hidden">
-                                    {images[pdf.subject] ? (
-                                        <img
-                                            src={images[pdf.subject]}
-                                            alt={pdf.subject}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <p className="text-center mt-16">
-                                            No Image
-                                        </p>
-                                    )}
-                                </div>
-                                <p className="text-lg ">
-                                    <span className="font-medium ">
-                                        Subject:
-                                    </span>{" "}
-                                    {pdf.subject}
-                                </p>
-                                <p className="text-lg">
-                                    <span className="font-medium">Level:</span>{" "}
-                                    {pdf.level}
-                                </p>
-                                <p className="text-sm mt-2">
-                                    <span className="font-medium">
-                                        Uploaded on:
-                                    </span>{" "}
-                                    {new Date(pdf.createdAt).toLocaleDateString(
-                                        "en-US",
-                                        {
+            <section className="w-full box-border p-6 lg:p-10">
+                {error ? (
+                    <p className="text-red-500">{error}</p>
+                ) : (
+                    <>
+                        <h2 className="text-3xl text-left font-extrabold mt-4">
+                            Your Tests
+                        </h2>
+                        <ul className="pt-8 p-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {pdfs.map((pdf) => (
+                                <li
+                                    key={pdf.id}
+                                    onClick={() => {
+                                        navigateInstruction(
+                                            pdf.id,
+                                            pdf.level,
+                                            pdf.subject
+                                        );
+                                    }}
+                                    className="hover:cursor-pointer flex flex-col gap-2 bg-[var(--main-color)] rounded-lg shadow-lg p-4 hover:shadow-2xl transition-shadow"
+                                >
+                                    <div className="h-40 w-full rounded mb-4 overflow-hidden">
+                                        {images[pdf.subject] ? (
+                                            <img
+                                                src={images[pdf.subject]}
+                                                alt={pdf.subject}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <p className="text-center mt-16">
+                                                No Image
+                                            </p>
+                                        )}
+                                    </div>
+                                    <p className="text-lg ">
+                                        <span className="font-medium ">
+                                            Subject:
+                                        </span>{" "}
+                                        {pdf.subject}
+                                    </p>
+                                    <p className="text-lg">
+                                        <span className="font-medium">
+                                            Level:
+                                        </span>{" "}
+                                        {pdf.level}
+                                    </p>
+                                    <p className="text-sm mt-2">
+                                        <span className="font-medium">
+                                            Uploaded on:
+                                        </span>{" "}
+                                        {new Date(
+                                            pdf.createdAt
+                                        ).toLocaleDateString("en-US", {
                                             day: "numeric",
                                             month: "short",
                                             year: "numeric",
-                                        }
-                                    )}
-                                </p>
-                            </li>
-                        ))}
-                    </ul>
-                    
-                </>
-            )}
-        </section>
-        <TestSelection/>
+                                        })}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )}
+            </section>
+            <TestSelection />
 
-        <div onclick={handleAdaptiveTest}>
-            {/*Not working put a different thumbnail for redirecting to adaptive test page ! */}
-        <img src="/adaptiveimage.png" className="w-30 h-30 cursor-pointer" onclick={handleAdaptiveTest} />
-        {/*Two type of career recommendation: 1 in which user can give specific field of interest etc
+            <div>
+                {/*Not working put a different thumbnail for redirecting to adaptive test page ! */}
+                {/* <img
+                    src="/adaptiveimage.png"
+                    className="cursor-pointer w-30 h-30"
+                    onclick={handleAdaptiveTest}
+                /> */}
+                <div
+                    style={{
+                        marginTop: "40px",
+                        padding: "20px",
+                        borderRadius: "5px",
+                        textAlign: "center",
+                    }}
+                >
+                    <h2 style={{ margin: "0 0 10px" }}>Adaptive Test</h2>
+                    <p style={{ margin: "0 0 20px" }}>
+                        Experience a personalized test designed to adapt to your
+                        skill level.
+                    </p>
+                    <button
+                        onClick = {handleAdaptiveTest}
+                        style={{
+                            padding: "10px 20px",
+                            backgroundColor: "var(--main-color)",
+                            color: "#fff",
+                            textDecoration: "none",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                        }}
+                    >
+                        Start Adaptive Test
+                    </button>
+                </div>
+                {/*Two type of career recommendation: 1 in which user can give specific field of interest etc
         2. these fields are fetched from database */}
-        </div>
-        
+            </div>
         </>
-        
     );
 };
 
