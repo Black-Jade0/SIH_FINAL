@@ -1,8 +1,6 @@
 import axios from "axios";
-import PdfList from "../Educator/PdfList";
 import { BASE_URL } from "../../config";
 import { React, useEffect, useState } from "react";
-import QuestionPaper from "./OnlineTest";
 import { useNavigate } from "react-router-dom";
 
 
@@ -63,12 +61,13 @@ const TestSelection = ()=>{
     const [level, setLevel] = useState("");
     const [data,setData] = useState();
     const requestsender = async (id,subject,level)=>{
+        console.log("got here: ",id)
         const response = await axios.get(BASE_URL+'/user/getparseddata2',{
             withCredentials:true
         },{
-            id,
-            subject,
-            level
+            id:id,
+            subject:subject,
+            level:level
         });
         console.log("Got the data from backend: ",response.data)
     setData(response.data);
@@ -79,13 +78,13 @@ const TestSelection = ()=>{
         navigate('/question-paper', { 
             state: { 
                 data: data.data,
-                subject,
-                level 
+                subject:subject,
+                level:level 
             }
         });
     }
 return (
-    <section className="w-full h-screen box-border p-6 lg:p-10">
+    <section className="w-full box-border p-6 lg:p-10">
         {error ? (
             <p className="text-red-500">{error}</p>
         ) : (
@@ -100,8 +99,8 @@ return (
                             onClick={() => {
                                 requestsender(
                                     pdf.id,
-                                    pdf.level,
-                                    pdf.subject
+                                    pdf.subject,
+                                    pdf.level
                                 );
                             }}
                             className="hover:cursor-pointer flex flex-col gap-2 bg-[var(--main-color)] rounded-lg shadow-lg p-4 hover:shadow-2xl transition-shadow"

@@ -4,7 +4,7 @@ const MultipleChoiceQuestion = ({ question, onAnswerChange }) => {
             <div className="p-4 border-b">
                 <div className="flex gap-2">
                     <span className="font-bold">{question.id}.</span>
-                    <span>{question.text}</span>
+                    <span className="text-black">{question.text}</span>
                 </div>
                 {question.marks && (
                     <div className="text-sm text-gray-500">
@@ -28,7 +28,7 @@ const MultipleChoiceQuestion = ({ question, onAnswerChange }) => {
                                 }
                                 className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             />
-                            <span className="text-gray-900">{option.text}</span>
+                            <span className="text-black">{option.text}</span>
                         </label>
                     ))}
                 </div>
