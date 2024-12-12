@@ -3,144 +3,60 @@ import { Link } from "react-router-dom";
 
 const PWDhome = () => {
     return (
-        <div
-            style={{
-                padding: "20px",
-                fontFamily: "Arial, sans-serif",
-                color: "#333",
-                lineHeight: "1.6",
-            }}
-        >
-            <h1
-                style={{
-                    textAlign: "center",
-                    color: "#2c3e50",
-                    marginBottom: "20px",
-                }}
-            >
-                Welcome to the PWD Section
-            </h1>
-            <p
-                style={{
-                    fontSize: "16px",
-                    textAlign: "justify",
-                    marginBottom: "30px",
-                }}
-            >
-                This section is dedicated to providing an inclusive and
-                accessible experience. Explore the following features tailored
-                for you:
-            </p>
-
-            <div
-                style={{
-                    marginTop: "20px",
-                    borderTop: "1px solid #ddd",
-                    paddingTop: "20px",
-                }}
-            >
-                <h2
-                    style={{
-                        color: "#34495e",
-                        marginBottom: "15px",
-                    }}
-                >
-                    Features:
-                </h2>
-                <ul
-                    style={{
-                        listStyleType: "none",
-                        paddingLeft: "0",
-                    }}
-                >
-                    <li
-                        style={{
-                            marginBottom: "20px",
-                            padding: "10px",
-                            backgroundColor: "#fff",
-                            border: "1px solid #ddd",
-                            borderRadius: "5px",
-                        }}
-                    >
-                        <h3 style={{ margin: "0 0 10px", color: "#2c3e50" }}>
-                            Online Tests
-                        </h3>
-                        <p style={{ margin: "0 0 10px" }}>
-                            Take online tests designed to assess your skills and
-                            provide valuable feedback.
-                        </p>
-                        <Link
-                            to="/PWD/Test"
-                            style={{
-                                textDecoration: "none",
-                                color: "#3498db",
-                            }}
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-300 text-gray-800">
+            <div className="w-full max-w-6xl p-6 bg-white shadow-3xl rounded-lg">
+                <h1 className="text-4xl font-bold text-center text-gray-900 mb-6">
+                    Welcome to the PWD Section
+                </h1>
+                <p className="text-lg text-center text-gray-700 mb-8">
+                    This section is dedicated to providing an inclusive and
+                    accessible experience. Explore the features tailored for you.
+                </p>
+                <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {[
+                        {
+                            title: "Online Tests",
+                            description:
+                                "Take online tests designed to assess your skills and provide valuable feedback.",
+                            link: "/PWD/Test",
+                            buttonText: "Go to Tests",
+                        },
+                        {
+                            title: "Results and Analytics",
+                            description:
+                                "View your test results and detailed analytics to track your progress.",
+                            link: "/PWD/Result",
+                            buttonText: "View Results",
+                        },
+                        {
+                            title: "Support",
+                            description:
+                                "Get assistance and support whenever you need it.",
+                            link: "/PWD/Support",
+                            buttonText: "Get Support",
+                        },
+                    ].map((feature, index) => (
+                        <div
+                            key={index}
+                            className="p-6 bg-gray-50 border border-gray-200 rounded-lg shadow hover:shadow-lg hover:bg-gray-100 transition"
                         >
-                            Go to Tests
-                        </Link>
-                    </li>
-                    <li
-                        style={{
-                            marginBottom: "20px",
-                            padding: "10px",
-                            backgroundColor: "#fff",
-                            border: "1px solid #ddd",
-                            borderRadius: "5px",
-                        }}
-                    >
-                        <h3 style={{ margin: "0 0 10px", color: "#2c3e50" }}>
-                            Results and Analytics
-                        </h3>
-                        <p style={{ margin: "0 0 10px" }}>
-                            View your test results and detailed analytics to
-                            track your progress.
-                        </p>
-                        <Link
-                            to="/PWD/Result"
-                            style={{
-                                textDecoration: "none",
-                                color: "#3498db",
-                            }}
-                        >
-                            View Results
-                        </Link>
-                    </li>
-                    <li
-                        style={{
-                            marginBottom: "20px",
-                            padding: "10px",
-                            backgroundColor: "#fff",
-                            border: "1px solid #ddd",
-                            borderRadius: "5px",
-                        }}
-                    >
-                        <h3 style={{ margin: "0 0 10px", color: "#2c3e50" }}>
-                            Support
-                        </h3>
-                        <p style={{ margin: "0 0 10px" }}>
-                            Get assistance and support whenever you need it.
-                        </p>
-                        <Link
-                            to="/PWD/Support"
-                            style={{
-                                textDecoration: "none",
-                                color: "#3498db",
-                            }}
-                        >
-                            Get Support
-                        </Link>
-                    </li>
-                </ul>
+                            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                {feature.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-6">
+                                {feature.description}
+                            </p>
+                            <Link
+                                to={feature.link}
+                                className="block text-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+                            >
+                                {feature.buttonText}
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
-
-            <footer
-                style={{
-                    marginTop: "30px",
-                    fontSize: "14px",
-                    textAlign: "center",
-                    color: "#7f8c8d",
-                }}
-            >
+            <footer className="mt-10 text-center text-sm text-gray-600">
                 <p>Providing accessibility for everyone, one step at a time.</p>
             </footer>
         </div>
