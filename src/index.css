@@ -66,14 +66,14 @@
 #root {
     scrollbar-width: 0;
     scrollbar-width: 0;
-    --main-color: rgb(59 130 246);
+    --main-color: rgb(28, 37, 49);
     --text-color: rgb(255, 255, 255);
-    --background-color: rgb(128, 170, 239);
-    --boom-color: #001429;
+    --background-color: rgb(22, 41, 66);
+    --boom-color: #1e1e1f;
     --border-thin: rgb(208, 208, 208);
-    --border-thick: rgb(226, 226, 226);
+    --border-thick: rgb(248, 246, 246);
     --sidebarselect-color : rgb(79, 84, 97);
-    --sidebar-color:#001429;
+    --sidebar-color:#111418;
     margin: 0;
     padding: 0;
 }
@@ -82,7 +82,7 @@
     padding: 0;
 }
 html {
-    background-color: rgb(128, 170, 239);
+    background-color: rgb(112, 161, 211);
     color: rgb(255, 255, 255);
 
     scrollbar-width: none;
