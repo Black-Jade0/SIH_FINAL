@@ -26,12 +26,15 @@ import PWDtest from "./User/PWD/Test/TestSelection";
 import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
 import CareerAdvisorSelector from "./User/test/CareerAdvisorSelection";
 import GoogleTranslate from "../Backend/src/GoogleTranslate";
+import DifficultySelector from "./DynamicTests/DynamicTestGeneration";
 
 function App() {
     return (
         <RecoilRoot>
-            <Router>                
-                    <GoogleTranslate />
+            <Router>
+            <div className="translate-wrapper">
+                        <GoogleTranslate />
+                    </div>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/welcome" element={<Home />} />
@@ -43,39 +46,19 @@ function App() {
                     <Route path="/User" element={<User />} />
                     <Route path="/uploadquestions" element={<UploadEduPdf />} />
                     <Route path="/UploadforEval" element={<UploadPageUser />} />
-                    <Route
-                        path="/tempquestionupload"
-                        element={<Tempquestionupload />}
-                    />
-                    <Route
-                        path="/User/Test/instructions"
-                        element={<InstructionPage />}
-                    />
-                    <Route
-                        path="/User/Test/uploadans"
-                        element={<Uploadans />}
-                    />
-                    <Route
-                        path="/User/Evaluation"
-                        element={<EvaluationResults />}
-                    />
+                    <Route path="/tempquestionupload" element={<Tempquestionupload />} />
+                    <Route path="/User/Test/instructions" element={<InstructionPage />} />
+                    <Route path="/User/Test/uploadans" element={<Uploadans />} />
+                    <Route path="/User/Evaluation" element={<EvaluationResults />} />
                     <Route path="/speechtotext" element={<SpeechToText />} />
                     <Route path="/onlinetest" element={<TestSelection />} />
                     <Route path="/question-paper" element={<QuestionPaper />} />
-                    <Route
-                        path="/Profilesetup"
-                        element={<ProfileSettingForm />}
-                    />
-                    <Route
-                        path="/careerrecommend"
-                        element={<CareerAdvisorSelector />}
-                    />
+                    <Route path="/Profilesetup" element={<ProfileSettingForm />} />
+                    <Route path="/careerrecommend" element={<CareerAdvisorSelector />} />
                     <Route path="/User/PWD" element={<PWDhome />} />
                     <Route path="/User/PWD/Test" element={<PWDtest />} />
-                    <Route
-                        path="/User/PWD/Test/questionpaper"
-                        element={<PWDquestionpaper />}
-                    />
+                    <Route path="/User/PWD/Test/questionpaper" element={<PWDquestionpaper />} />
+                    <Route path="/dynamicquestions" element={<DifficultySelector />} />
                 </Routes>
             </Router>
         </RecoilRoot>
