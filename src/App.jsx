@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import Home from "./Components/Home";
-import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
 import EduSign from "./Components/EduSign/Sign";
 import StuSign from "./Components/StuSign/Sign";
 import Choice from "./Components/Choice";
@@ -18,9 +16,6 @@ import TestSelection from "./Test/TestSelection";
 import QuestionPaper from "./Test/OnlineTest";
 import ProfileSettingForm from "./User/Profile/ProfileSettingForm";
 import EvaluationResults from "./User/Result/Evaluation";
-import TriviaGame from "./AiModels/AdaptiveLevel";
-import PDFUploadForm from "./User/Profile/ProfileSettingForm";
-import CareerAdvisor from "./User/CareerRecommendation";
 import PWDhome from "./User/PWD/home";
 import PWDtest from "./User/PWD/Test/TestSelection";
 import PWDquestionpaper from "./User/PWD/Test/OnlineTest";
